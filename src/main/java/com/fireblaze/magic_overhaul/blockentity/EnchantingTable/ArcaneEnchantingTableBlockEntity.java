@@ -265,50 +265,6 @@ public class ArcaneEnchantingTableBlockEntity extends BlockEntity {
         }
     }
 
-    /*
-    private final Map<Block, MagicSourceBlocks> blockPalette = new HashMap<>();
-    private final Map<TagKey<Block>, MagicSourceBlockTags> tagPalette = new HashMap<>();
-    private Map<Block, Integer> blockCurrentPower = new HashMap<>();
-    private int currentMagicPower = 0;
-    private int maxMagicPower = 0;
-    public void addBlock(MagicSourceBlocks block) {
-        blockPalette.put(block.block, block);
-    }
-
-    public void addTag(MagicSourceBlockTags tag) {
-        tagPalette.put(tag.tag, tag);
-    }
-
-    public int calculateMaxMagic() {
-        int cap = 0;
-        for (MagicSourceBlocks b : blockPalette.values()) cap += b.magicCap;
-        for (MagicSourceBlockTags t : tagPalette.values()) cap += t.magicCap;
-        return cap;
-    }
-
-    public Map<Block, MagicSourceBlocks> getBlockPalette() { return blockPalette; }
-    public Map<TagKey<Block>, MagicSourceBlockTags> getTagPalette() { return tagPalette; }
-    public int getCurrentPowerForBlock(Block block) {
-        return blockCurrentPower.getOrDefault(block, 0);
-    }
-
-    public int scanSurroundingBlocks(int scanCap, int radiusCap) {
-        loadArcaneTablePalette();
-        ScanResult scanResult = MagicScanner.scanMagicBlocks(level, this.worldPosition, blockPalette, tagPalette, scanCap, radiusCap);
-        blockCurrentPower = scanResult.blockPowerMap;
-        currentMagicPower = scanResult.totalMagic;
-        setChanged();
-
-        return currentMagicPower;
-    }
-
-    private void loadArcaneTablePalette() {
-        ArcaneTableConfigLoader.loadIntoBE(this, "/data/magic_overhaul/config/arcane_table.json");
-        System.out.println("[ArcaneEnchantingTable] Loaded block palette from JSON!");
-    }*/
-
-    // =====================================================
-
     private final Map<Enchantment, Integer> selected = new HashMap<>();
 
     public Map<Enchantment, Integer> getSelected() {

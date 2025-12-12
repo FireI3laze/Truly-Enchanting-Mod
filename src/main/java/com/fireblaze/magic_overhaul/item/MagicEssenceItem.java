@@ -1,8 +1,10 @@
 package com.fireblaze.magic_overhaul.item;
 
 import com.fireblaze.magic_overhaul.util.XPUtil;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -13,6 +15,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 public class MagicEssenceItem extends Item {
 
@@ -49,7 +53,7 @@ public class MagicEssenceItem extends Item {
 
         if (totalXp < XP_COST) {
             sp.displayClientMessage(
-                    net.minecraft.network.chat.Component.literal("Nicht genug Erfahrungspunkte!"),
+                    net.minecraft.network.chat.Component.literal("Not enough experience"),
                     true
             );
             return InteractionResultHolder.fail(stack);
@@ -92,10 +96,22 @@ public class MagicEssenceItem extends Item {
         }
 
         sp.displayClientMessage(
-                net.minecraft.network.chat.Component.literal("Geladen: " + toConvert + " Magic Essence"),
+                net.minecraft.network.chat.Component.literal("Charged: " + toConvert + " Magic Essence"),
                 true
         );
 
         return InteractionResultHolder.success(stack);
     }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, net.minecraft.world.item.TooltipFlag flag) {
+        super.appendHoverText(stack, level, tooltip, flag);
+
+        CompoundTag tag = stack.getTag();
+        boolean charged = tag != null && tag.getBoolean(NBT_CHARGED);
+
+        if (!charged) tooltip.add(net.minecraft.network.chat.Component.literal("Right-click to charge").withStyle(ChatFormatting.GREEN));
+        else tooltip.add(net.minecraft.network.chat.Component.literal("Charged").withStyle(ChatFormatting.LIGHT_PURPLE));
+    }
+
 }

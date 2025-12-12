@@ -2,39 +2,41 @@ package com.fireblaze.magic_overhaul.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.minecraft.client.Minecraft;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * Einfaches clientseitiges JSON-Config-Backend.
+ * Speichert genau die Werte, die du angefragt hast.
+ */
 public class ClientConfig {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static ClientConfig INSTANCE;
 
-    // UI / Preferences (persisted)
-    public boolean showBlocklist = true;
-    public boolean sortAscending = true;
-
-    // which controller (by displayName) is selected / visible per side
-    public String selectedControllerLeft = null;
-    public String selectedControllerRight = null;
-
-    // whether the whole side is visible (toggle)
-    public boolean sideLeftVisible = true;
-    public boolean sideRightVisible = true;
-
-    // magic bar visual options
+    // >>> Deine gespeicherten Einstellungen
     public boolean magicBarMotion = false;
     public boolean magicBarSparkle = true;
 
-    // path within .minecraft/config/...
-    private static final Path CONFIG_PATH = Minecraft.getInstance().gameDirectory
-            .toPath()
-            .resolve("config")
-            .resolve("magic_overhaul_client_config.json");
+    public boolean leftSideVisible = true;
+    public boolean rightSideVisible = true;
+
+    // welche Controller (ids) sind aktuell als sichtbar auf den Seiten ausgewählt
+    // Beispiel: leftVisibleController = "blocklist"
+    public String leftVisibleController = "blocklist";
+    public String rightVisibleController = "enchantments";
+
+    // mapping, welches Controller (by id) auf welcher Seite liegt -> "LEFT"/"RIGHT"/"TOP"/"BOTTOM"
+    // keys: "blocklist","enchantments","magicbar"
+    public Map<String, String> controllerSideMapping = new HashMap<>();
+
+    // Datei-Pfad
+    private static final Path CONFIG_PATH = Path.of("config", "truly_magical", "arcane_enchanting_table_preferences.json");
 
     public static ClientConfig get() {
         if (INSTANCE == null) load();
@@ -43,19 +45,29 @@ public class ClientConfig {
 
     public static void load() {
         File file = CONFIG_PATH.toFile();
+
         if (!file.exists()) {
             INSTANCE = new ClientConfig();
-            save();
-            System.out.println("[MagicOverhaul] Created default client config.");
+            // default mapping
+            INSTANCE.controllerSideMapping.put("blocklist", "LEFT");
+            INSTANCE.controllerSideMapping.put("enchantments", "LEFT");
+            INSTANCE.controllerSideMapping.put("magicbar", "TOP");
+            save(); // erzeugt die Datei
             return;
         }
 
-        try (FileReader r = new FileReader(file)) {
-            INSTANCE = GSON.fromJson(r, ClientConfig.class);
-            if (INSTANCE == null) INSTANCE = new ClientConfig();
+        try (FileReader reader = new FileReader(file)) {
+            INSTANCE = GSON.fromJson(reader, ClientConfig.class);
+            // ensure defaults for missing keys
+            if (INSTANCE.controllerSideMapping == null) INSTANCE.controllerSideMapping = new HashMap<>();
+            if (!INSTANCE.controllerSideMapping.containsKey("blocklist"))
+                INSTANCE.controllerSideMapping.put("blocklist", "LEFT");
+            if (!INSTANCE.controllerSideMapping.containsKey("enchantments"))
+                INSTANCE.controllerSideMapping.put("enchantments", "LEFT");
+            if (!INSTANCE.controllerSideMapping.containsKey("magicbar"))
+                INSTANCE.controllerSideMapping.put("magicbar", "TOP");
             System.out.println("[MagicOverhaul] Loaded client config.");
         } catch (Exception e) {
-            System.err.println("[MagicOverhaul] Failed to load client config — using defaults.");
             e.printStackTrace();
             INSTANCE = new ClientConfig();
         }
@@ -65,19 +77,22 @@ public class ClientConfig {
         try {
             File file = CONFIG_PATH.toFile();
             file.getParentFile().mkdirs();
-            try (FileWriter w = new FileWriter(file)) {
-                GSON.toJson(get(), w);
+
+            try (FileWriter writer = new FileWriter(file)) {
+                GSON.toJson(get(), writer);
             }
-            System.out.println("[MagicOverhaul] Saved client config.");
+
         } catch (Exception e) {
-            System.err.println("[MagicOverhaul] Failed to save client config.");
             e.printStackTrace();
         }
     }
 
-    /** convenience: set & persist */
-    public void saveNow() {
-        INSTANCE = this;
-        save();
+    // convenience setters used by the screen
+    public void setControllerSide(String controllerId, String side) {
+        controllerSideMapping.put(controllerId, side);
+    }
+
+    public String getControllerSide(String controllerId) {
+        return controllerSideMapping.getOrDefault(controllerId, "LEFT");
     }
 }

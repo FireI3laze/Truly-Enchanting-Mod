@@ -1,5 +1,6 @@
 package com.fireblaze.magic_overhaul.client.screen.utils;
 
+import com.fireblaze.magic_overhaul.client.ClientConfig;
 import com.fireblaze.magic_overhaul.util.PlayerSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -36,6 +37,7 @@ public class MagicPowerBar {
     private boolean motion = true;
     private boolean sparkle = true;
     private float plannedConsumption = 0f;
+    private final ClientConfig cfg = ClientConfig.get();
 
 
 
@@ -297,8 +299,10 @@ public class MagicPowerBar {
             }
 
             assert Minecraft.getInstance().player != null;
-            PlayerSettings.saveBoolean(Minecraft.getInstance().player, "magicBarMotion", motion);
-            PlayerSettings.saveBoolean(Minecraft.getInstance().player, "magicBarSparkle", sparkle);
+            cfg.magicBarMotion = motion;
+            ClientConfig.save();
+            cfg.magicBarSparkle = sparkle;
+            ClientConfig.save();
             return true; // Klick auf die Bar wurde verarbeitet
         }
 

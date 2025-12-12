@@ -22,10 +22,12 @@ public class MagicAccumulator {
     private Map<TagKey<Block>, Integer> tagCurrentPower = new HashMap<>();
     private Map<MonolithBlockEntity, Float> monolithsCurrentPower = new HashMap<>();
 
+    private final int magicPowerPerEssence = 100;
     private int currentMagicPowerIncreaseRate = 0;
     private float accumulatedMagicPower = 0;
     private final float magicPowerCapPerPlayerHard = 100000.0f;
     private float magicPowerCapPerPlayerSoft;
+    private float catchedMagicPowerCapPerPlayerSoft;
 
     public void addBlock(MagicSourceBlocks block) {
         blockPalette.put(block.block, block);
@@ -91,6 +93,10 @@ public class MagicAccumulator {
                 accumulatedMagicPower + gainThisTick,
                 magicPowerCapPerPlayerSoft
         );
+    }
+
+    public void magicEssenceToMagicPower(int amount) {
+        accumulatedMagicPower += magicPowerPerEssence * amount;
     }
 
     public void scan(Level level, BlockPos pos, int scanCap, int radiusCap) {

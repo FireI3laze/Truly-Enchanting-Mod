@@ -9,7 +9,6 @@ import com.fireblaze.magic_overhaul.network.SetEnchantSelectionPacket;
 import com.fireblaze.magic_overhaul.util.MagicCostCalculator;
 import com.fireblaze.magic_overhaul.util.MagicSourceBlockTags;
 import com.fireblaze.magic_overhaul.util.MagicSourceBlocks;
-import com.fireblaze.magic_overhaul.util.PlayerSettings;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -23,6 +22,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneEnchantingTableMenu> {
+
+    // controller ids (strings) -- benutzt in der Config
+    private static final String ID_BLOCKLIST = "blocklist";
+    private static final String ID_ENCHANTMENTS = "enchantments";
+    private static final String ID_MAGICBAR = "magicbar";
 
     public ArcaneEnchantingTableScreen(ArcaneEnchantingTableMenu menu, Inventory inv, Component title) {
         super(menu, inv, title);
@@ -46,6 +50,9 @@ public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneE
     private final Map<ScreenSide, Boolean> sideVisibilityState = new EnumMap<>(ScreenSide.class);
     private final Map<ScreenController, ItemStack> controllerIcons = new HashMap<>();
 
+    // Map von controller -> id (string), damit wir in der Config schreiben können
+    private final Map<ScreenController, String> controllerIds = new HashMap<>();
+    private final Map<String, ScreenController> controllersById = new HashMap<>();
 
     // controllers as fields so we can reference them
     private ScreenController blocklistController;
@@ -62,15 +69,15 @@ public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneE
     private final List<CustomButton> sideSwitchButtons = new ArrayList<>();
     private final List<CustomButton> sideToggleButtons = new ArrayList<>();
 
+    private final ClientConfig cfg = ClientConfig.get();
+
     @Override
     protected void init() {
         super.init();
 
         acc = menu.getBlockEntity().getMagicAccumulator();
 
-        ClientConfig cfg = ClientConfig.get();
-
-        // Build controllers (store as fields)
+        // Build controllers (store as fields) with default side; will override from cfg below
         blocklistController = new ScreenController(
                 leftPos,
                 topPos,
@@ -97,7 +104,7 @@ public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneE
                 imageWidth,
                 imageHeight,
                 rowHeight,
-                400,
+                (int)(imageWidth * 1.2),
                 ScreenSide.TOP
         );
 
@@ -106,6 +113,18 @@ public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneE
         controllers.add(blocklistController);
         controllers.add(enchantmentController);
         controllers.add(magicalBarController);
+
+        // register ids
+        controllerIds.put(blocklistController, ID_BLOCKLIST);
+        controllerIds.put(enchantmentController, ID_ENCHANTMENTS);
+        controllerIds.put(magicalBarController, ID_MAGICBAR);
+
+        controllersById.put(ID_BLOCKLIST, blocklistController);
+        controllersById.put(ID_ENCHANTMENTS, enchantmentController);
+        controllersById.put(ID_MAGICBAR, magicalBarController);
+
+        // Apply side mapping from config (overrides constructor sides)
+        applySidesFromConfig();
 
         // Build UI components bound to controllers
         blocklistScreen = new BlocklistScreen(
@@ -124,19 +143,31 @@ public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneE
 
         magicPowerBar = new MagicPowerBar(magicalBarController, font, magicalBarController.getListWidth(), acc.getMagicPowerCapPerPlayerSoft(), 100000);
 
-        // load player settings
-        assert minecraft != null && minecraft.player != null;
-        magicPowerBar.setMotion(PlayerSettings.loadBoolean(minecraft.player, "magicBarMotion", false));
-        magicPowerBar.setSparkle(PlayerSettings.loadBoolean(minecraft.player, "magicBarSparkle", true));
+        // load magic bar settings from cfg
+        magicPowerBar.setMotion(cfg.magicBarMotion);
+        magicPowerBar.setSparkle(cfg.magicBarSparkle);
 
-        // initial visibility: one visible controller per side (first in that group)
+        // load side visibility flags from cfg
+        sideVisibilityState.put(ScreenSide.LEFT, cfg.leftSideVisible);
+        sideVisibilityState.put(ScreenSide.RIGHT, cfg.rightSideVisible);
+        // ensure each controller visibility follows sideVisibility for its side (but keep single visible controller per side)
+        // initial visibility: for each side, choose cfg visible controller if available, otherwise first in that group
         var groups = groupControllersBySide();
         for (var e : groups.entrySet()) {
+            ScreenSide side = e.getKey();
             List<ScreenController> grp = e.getValue();
             if (!grp.isEmpty()) {
-                ScreenController first = grp.get(0);
-                visibleController.put(e.getKey(), first);
-                for (ScreenController c : grp) c.setVisible(c == first);
+                ScreenController chosen = null;
+                String cfgChosenId = (side == ScreenSide.LEFT) ? cfg.leftVisibleController : (side == ScreenSide.RIGHT) ? cfg.rightVisibleController : null;
+                if (cfgChosenId != null) {
+                    ScreenController fromCfg = controllersById.get(cfgChosenId);
+                    if (fromCfg != null && grp.contains(fromCfg)) chosen = fromCfg;
+                }
+                if (chosen == null) chosen = grp.get(0);
+                visibleController.put(side, chosen);
+                // apply visibility according to sideVisibilityState
+                boolean sideVis = sideVisibilityState.getOrDefault(side, true);
+                for (ScreenController c : grp) c.setVisible(sideVis && c == chosen);
             }
         }
 
@@ -148,6 +179,22 @@ public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneE
         controllers.forEach(c -> c.recalculatePosition(leftPos, topPos, imageWidth, imageHeight));
         // initial dynamic UI
         buildDynamicUI();
+    }
+
+    private void applySidesFromConfig() {
+        // for each controller id stored in config, move corresponding controller to the saved side
+        for (Map.Entry<String, String> e : cfg.controllerSideMapping.entrySet()) {
+            String id = e.getKey();
+            String sideStr = e.getValue();
+            ScreenController ctrl = controllersById.get(id);
+            if (ctrl == null) continue;
+            try {
+                ScreenSide side = ScreenSide.valueOf(sideStr);
+                ctrl.moveToSide(side);
+            } catch (Exception ex) {
+                // ignore invalid enum / value
+            }
+        }
     }
 
     @Override
@@ -163,21 +210,19 @@ public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneE
         sideSwitchButtons.forEach(b -> { if (b.visible) b.render(gui, mouseX, mouseY); });
         sideToggleButtons.forEach(b -> { if (b.visible) b.render(gui, mouseX, mouseY); });
 
+        // render icon on controller-switch buttons (icon corresponds to the controller currently visible on that side)
         controllerSwitchButtons.forEach(b -> {
             if (b.visible) {
-                b.render(gui, mouseX, mouseY);
-                if (b.side != null) {
-                    ScreenController visible = visibleController.get(b.side);
-                    if (visible != null) {
-                        ItemStack stack = controllerIcons.get(visible);
-                        if (stack != null) {
-                            gui.renderItem(stack, b.x1 + 11, b.y1);
-                        }
+                // render item centered-ish
+                ScreenController visible = (b.side != null) ? visibleController.get(b.side) : null;
+                if (visible != null) {
+                    ItemStack stack = controllerIcons.get(visible);
+                    if (stack != null) {
+                        gui.renderItem(stack, b.x1 + 11, b.y1);
                     }
                 }
             }
         });
-
     }
 
     @Override
@@ -192,19 +237,14 @@ public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneE
 
         if (blocklistController.isVisible()) {
             // update blocklistScreen positions if parent moved
-            blocklistScreen = new BlocklistScreen(
-                    blocklistController.getListX(),
-                    blocklistController.getListY(),
-                    blocklistController.getListWidth(),
-                    imageHeight,
-                    rowHeight,
-                    font,
-                    acc,
-                    acc.getBlockPalette(),
-                    acc.getTagPalette()
-            );
+            blocklistScreen.left = blocklistController.getListX();
+            blocklistScreen.top = blocklistController.getListY();
+            blocklistScreen.imageHeight = imageHeight;
+            blocklistScreen.rowHeight = rowHeight;
+
             blocklistScreen.render(gui, mouseX, mouseY);
         }
+
 
         // Magic bar always rendered if its controller visible
         if (magicalBarController.isVisible()) {
@@ -326,25 +366,26 @@ public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneE
 
             // Position des Buttons immer relativ zum sichtbaren Controller
             int x = getButtonXRelative(visible, 0);
-            int y = getButtonYBelow(visible, 4); // über dem Interface
+            int y = getButtonYBelow(visible, 4); // unterhalb des Interface
 
             // **Nur ein Button pro Seite**
             CustomButton cycle = new CustomButton(
-                    x,
-                    y,
-                    x + 40,
-                    y + 16,
+                    x, y,
+                    x + 40, y + 16,
                     "",
                     "",
                     0xFF333333,
                     0xFF333333,
                     0xFFAA0FFF,
                     font,
-                    (newState) -> cycleToNextController(side),
-                    side
+                    (newState) -> cycleToNextController(side)
             );
+            cycle.side = side;
+
+            cycle.visible = sideVisibilityState.getOrDefault(side, true);
 
             controllerSwitchButtons.add(cycle);
+
         }
     }
 
@@ -362,37 +403,49 @@ public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneE
         // Sichtbarkeit aktualisieren
         visibleController.put(side, nextController);
         for (ScreenController c : group) {
-            c.setVisible(c == nextController);
+            c.setVisible(c == nextController && sideVisibilityState.getOrDefault(side, true));
+        }
+
+        // speichern: welche controller id ist jetzt sichtbar auf dieser Seite
+        String id = controllerIds.get(nextController);
+        if (id != null) {
+            if (side == ScreenSide.LEFT) cfg.leftVisibleController = id;
+            else if (side == ScreenSide.RIGHT) cfg.rightVisibleController = id;
+            ClientConfig.save();
         }
 
         // **Button nicht erneut bauen**, sondern nur Position ggf. anpassen
-        // controllerSwitchButtons.clear(); // NICHT mehr aufrufen
-        CustomButton btn = controllerSwitchButtons.stream().findFirst().orElse(null);
+        CustomButton btn = controllerSwitchButtons.stream().filter(b -> b.side == side).findFirst().orElse(null);
         if (btn != null) {
             btn.x1 = getButtonXRelative(nextController, 0);
             btn.y1 = getButtonYBelow(nextController, 4);
             btn.x2 = btn.x1 + 40;
             btn.y2 = btn.y1 + 16;
         }
-
     }
 
 
     private void switchToController(ScreenSide side, ScreenController controller) {
         visibleController.put(side, controller);
         for (ScreenController c : groupControllersBySide().getOrDefault(side, Collections.emptyList())) {
-            c.setVisible(c == controller);
+            c.setVisible(c == controller && sideVisibilityState.getOrDefault(side, true));
         }
         // update buttons (toggled state)
         for (CustomButton b : controllerSwitchButtons) {
             // set toggled states by comparing label -> safe enough if displayNames unique per group
             b.setToggled(bLabelEquals(b, controller.getDisplayName()));
         }
+
+        // save which controller is visible
+        String id = controllerIds.get(controller);
+        if (id != null) {
+            if (side == ScreenSide.LEFT) cfg.leftVisibleController = id;
+            if (side == ScreenSide.RIGHT) cfg.rightVisibleController = id;
+            ClientConfig.save();
+        }
     }
 
     private boolean bLabelEquals(CustomButton b, String label) {
-        // reflection of label text is not exposed; as a pragmatic approach we assume unique labels and check toggled already set
-        // (we update toggled in creation and on switchToController above), so nothing to do here unless you expose getter on CustomButton.
         return b != null && b.getWidth() >= 0; // noop placeholder to keep compile-time consistent
     }
 
@@ -430,8 +483,9 @@ public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneE
                         ScreenController currentVisible = visibleController.get(side);
                         if (currentVisible != null) moveControllerToOppositeSide(currentVisible);
                     }
-
             );
+            move.side = side;
+            move.visible = sideVisibilityState.getOrDefault(side, true);
 
             sideSwitchButtons.add(move);
         }
@@ -441,23 +495,26 @@ public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneE
         ScreenSide oldSide = controller.getSide();
         ScreenSide newSide = (oldSide == ScreenSide.LEFT) ? ScreenSide.RIGHT : ScreenSide.LEFT;
 
+        // update model
         controller.moveToSide(newSide);
 
-        // re-evaluate groups and visible map: if the controller was visible on old side,
-        // move visibility to this controller in the new side (and ensure only one visible per side)
+        // record in config: map controller id -> new side
+        String id = controllerIds.get(controller);
+        if (id != null) {
+            cfg.setControllerSide(id, newSide.name());
+            ClientConfig.save();
+        }
+
+        // re-evaluate groups and visible map
         controllers.forEach(c -> c.recalculatePosition(leftPos, topPos, imageWidth, imageHeight));
 
-        // re-create grouping defaults: ensure each side has a visible controller
         var groups = groupControllersBySide();
-        // ensure visible controller mapping remains valid
         groups.forEach((side, list) -> {
             ScreenController currently = visibleController.get(side);
             if (currently == null || !list.contains(currently)) {
-                // pick first available
                 if (!list.isEmpty()) visibleController.put(side, list.get(0));
             }
-            // ensure visible flags
-            for (ScreenController sc : list) sc.setVisible(sc == visibleController.get(side));
+            for (ScreenController sc : list) sc.setVisible(sc == visibleController.get(side) && sideVisibilityState.getOrDefault(side, true));
         });
 
         // rebuild dynamic UI to reflect new positions / buttons
@@ -482,7 +539,7 @@ public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneE
             int x = getButtonXRelative(visible, 100); // rechts neben Move-Button
             int y = getButtonYBelow(visible, 4);      // unterhalb des Interface
 
-            // initialer Zustand: alle sichtbar
+            // initialer Zustand: alle sichtbar (wird bereits aus cfg gesetzt)
             sideVisibilityState.putIfAbsent(side, true);
 
             CustomButton toggle = new CustomButton(
@@ -490,14 +547,15 @@ public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneE
                     y,
                     x + 40,
                     y + 16,
-                    "Hide",
-                    "Show",
+                    "...",
+                    "...",
                     0xFF333333,
-                    0xFF555555,
+                    0xFF333333,
                     0xFFAA0FFF,
                     font,
                     (newState) -> toggleSideVisibility(side)
             );
+            toggle.side = side;
 
             sideToggleButtons.add(toggle);
         }
@@ -507,6 +565,11 @@ public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneE
         boolean currentlyVisible = sideVisibilityState.getOrDefault(side, true);
         boolean newVisibility = !currentlyVisible;
         sideVisibilityState.put(side, newVisibility);
+
+        // persist into cfg
+        if (side == ScreenSide.LEFT) cfg.leftSideVisible = newVisibility;
+        if (side == ScreenSide.RIGHT) cfg.rightSideVisible = newVisibility;
+        ClientConfig.save();
 
         List<ScreenController> group = groupControllersBySide().getOrDefault(side, Collections.emptyList());
 
@@ -573,5 +636,4 @@ public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneE
         if (bMatchesSide(b, ScreenSide.RIGHT)) return visibleController.get(ScreenSide.RIGHT);
         return null;
     }
-
 }

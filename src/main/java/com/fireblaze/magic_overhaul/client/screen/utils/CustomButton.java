@@ -8,6 +8,8 @@ public class CustomButton {
     public int x1, y1;
     public int x2, y2;
 
+    public ScreenSide side; // neu: know which side this button belongs to (nullable)
+
     private final String labelOff;
     private final String labelOn;
 
@@ -22,38 +24,27 @@ public class CustomButton {
 
     private final Font font;
 
-    public ScreenSide side; // <- Neue Property
-
     public interface ClickHandler {
         void onClick(boolean newState);
     }
 
     private final ClickHandler clickHandler;
 
-    // Neuer Konstruktor mit Seite
+    // alter Konstruktor (ohne side) bleibt kompatibel:
     public CustomButton(int x1, int y1, int x2, int y2,
-                        String labelOff,
-                        String labelOn,
-                        int unpressedColor,
-                        int pressedColor,
-                        int hoverBorderColor,
-                        Font font,
-                        ClickHandler clickHandler,
-                        ScreenSide side) {
-
-        this(x1, y1, x2, y2, labelOff, labelOn, unpressedColor, pressedColor, hoverBorderColor, font, clickHandler);
-        this.side = side;
+                        String labelOff, String labelOn,
+                        int unpressedColor, int pressedColor, int hoverBorderColor,
+                        Font font, ClickHandler clickHandler) {
+        this(x1, y1, x2, y2, labelOff, labelOn, unpressedColor, pressedColor, hoverBorderColor, font, clickHandler, null);
     }
 
-    // Original-Konstruktor (falls benötigt)
+    // neuer Konstruktor mit Side
     public CustomButton(int x1, int y1, int x2, int y2,
-                        String labelOff,
-                        String labelOn,
-                        int unpressedColor,
-                        int pressedColor,
-                        int hoverBorderColor,
-                        Font font,
-                        ClickHandler clickHandler) {
+                        String labelOff, String labelOn,
+                        int unpressedColor, int pressedColor, int hoverBorderColor,
+                        Font font, ClickHandler clickHandler,
+                        ScreenSide side) {
+
         this.x1 = Math.min(x1, x2);
         this.y1 = Math.min(y1, y2);
         this.x2 = Math.max(x1, x2);
@@ -68,7 +59,7 @@ public class CustomButton {
 
         this.font = font;
         this.clickHandler = clickHandler;
-        this.side = null; // Standard: keine Seite
+        this.side = side;
     }
 
     public void setPosition(int newX, int newY) {
@@ -110,10 +101,9 @@ public class CustomButton {
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (button == 0 && armed) {
             armed = false;
-
             if (isMouseOver(mouseX, mouseY)) {
                 toggled = !toggled;
-                clickHandler.onClick(toggled);
+                if (clickHandler != null) clickHandler.onClick(toggled);
                 return true;
             }
         }
@@ -124,15 +114,8 @@ public class CustomButton {
         return mx >= x1 && mx <= x2 && my >= y1 && my <= y2;
     }
 
-    public int getWidth() {
-        return x2 - x1;
-    }
+    public int getWidth() { return x2 - x1; }
+    private int getHeight() { return y2 - y1; }
 
-    private int getHeight() {
-        return y2 - y1;
-    }
-
-    public void setToggled(boolean state) {
-        this.toggled = state;
-    }
+    public void setToggled(boolean state) { this.toggled = state; }
 }

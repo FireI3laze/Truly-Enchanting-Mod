@@ -18,11 +18,11 @@ import java.util.Map;
 public class BlocklistScreen {
 
     // --- Layout ---
-    private int left;
-    private int top;
+    public int left;
+    public int top;
     private int imageWidth;
-    private int imageHeight;
-    private int rowHeight;
+    public int imageHeight;
+    public int rowHeight;
     private int blockListWidth;
 
     // --- State ---
@@ -164,8 +164,20 @@ public class BlocklistScreen {
                 int placed = perBlock > 0 ? (int) Math.ceil((double) sum / perBlock) : 0;
                 displayCurrent = Math.min(placed * perBlock, displayMax);
 
-                String raw = rt.tag.location().getPath();
-                displayName = raw.isEmpty() ? raw : raw.substring(0, 1).toUpperCase() + raw.substring(1);
+                String raw = rt.tag.location().getPath(); // z.B. "logs_that_burn"
+                if (raw.isEmpty()) {
+                    displayName = raw;
+                } else {
+                    String[] parts = raw.split("_");
+                    StringBuilder sb = new StringBuilder();
+                    for (int j = 0; j < parts.length; j++) {
+                        if (parts[j].isEmpty()) continue;
+                        sb.append(parts[j].substring(0, 1).toUpperCase());
+                        if (parts[j].length() > 1) sb.append(parts[j].substring(1));
+                        if (j < parts.length - 1) sb.append(" ");
+                    }
+                    displayName = sb.toString(); // -> "Logs That Burn"
+                }
             } else {
                 continue;
             }
@@ -173,30 +185,36 @@ public class BlocklistScreen {
             // ICON
             graphics.renderItem(renderBlock.asItem().getDefaultInstance(), listX, yPos);
 
-            // Name trimmen
-            String trimmed = displayName;
-            int maxWidth = 100 - 18 - 2;
-            while (font.width(trimmed) > maxWidth && !trimmed.isEmpty()) {
-                trimmed = trimmed.substring(0, trimmed.length() - 1);
-            }
-            if (font.width(trimmed) > maxWidth) {
-                trimmed = trimmed.substring(0, trimmed.length() - 3) + "...";
-            }
-
-            graphics.drawString(font, trimmed, listX + 18, yPos + 4, 0xFFFFFF, false);
-
             // POWER rechtsbündig
-            String text = displayCurrent + "/" + displayMax;
+            String powerText = displayCurrent + "/" + displayMax;
+            int powerWidth = font.width(powerText);
             int rightX = listX + blockListWidth - 4;
-            int w = font.width(text);
-            graphics.drawString(font, text, rightX - w, yPos + 4, 0xFFFFFF, false);
+
+            // Platz für Blocknamen dynamisch berechnen
+            int availableWidthForName = rightX - powerWidth - (listX + 18 + 4); // icon + padding + Power-Text
+            String trimmedName = displayName;
+
+            // Text trimmen falls zu lang
+            if (font.width(trimmedName) > availableWidthForName) {
+                while (font.width(trimmedName + "...") > availableWidthForName && !trimmedName.isEmpty()) {
+                    trimmedName = trimmedName.substring(0, trimmedName.length() - 1);
+                }
+                trimmedName += "...";
+            }
+
+            // NAME linksbündig zeichnen
+            graphics.drawString(font, trimmedName, listX + 18, yPos + 4, 0xFFFFFF, false);
+
+            // POWER rechtsbündig zeichnen
+            graphics.drawString(font, powerText, rightX - powerWidth, yPos + 4, 0xFFFFFF, false);
+
 
             // TOOLTIP
             if (mouseX >= listX && mouseX <= listX + 16 &&
                     mouseY >= yPos && mouseY <= yPos + 16) {
 
                 List<Component> tooltip = new ArrayList<>();
-                tooltip.add(Component.literal(trimmed));
+                tooltip.add(Component.literal(displayName));
                 tooltip.add(Component.literal("Current: " + displayCurrent + " / Max: " + displayMax));
                 tooltip.add(Component.literal("Per Block: " + perBlock));
 
