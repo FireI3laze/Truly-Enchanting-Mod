@@ -2,7 +2,7 @@ package com.fireblaze.magic_overhaul.menu;
 
 import com.fireblaze.magic_overhaul.blockentity.MonolithBlockEntity;
 import com.fireblaze.magic_overhaul.registry.ModMenus;
-import com.fireblaze.magic_overhaul.runes.RuneType;
+import com.fireblaze.magic_overhaul.runes.RuneDefinition;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -18,7 +18,7 @@ public class MonolithMenu extends AbstractContainerMenu {
 
     private final BlockPos pos;
     public final MonolithBlockEntity monolith;
-    public RuneType currentRune;
+    public RuneDefinition currentRune;
 
 
     public MonolithMenu(int containerId, Inventory playerInv, FriendlyByteBuf buf) {
@@ -42,7 +42,7 @@ public class MonolithMenu extends AbstractContainerMenu {
             });
 
             if (be instanceof MonolithBlockEntity monolithBE) {
-                this.currentRune = monolithBE.getCurrentRuneType();
+                this.currentRune = monolithBE.getCurrentRune();
                 tempMonolith = monolithBE; // speichern
             }
         }

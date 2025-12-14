@@ -30,20 +30,6 @@
     { "tag": "minecraft:planks", "min": 1, "max": 150 },
     { "tag": "minecraft:wooden_doors", "min": 2, "max": 20 }
   ],
-  "structures": [
-    "minecraft:village",
-    "minecraft:village_plains",
-    "minecraft:village_snowy",
-    "minecraft:village_taiga",
-    "minecraft:village_desert",
-    "minecraft:village_savanna"
-  ],
-  "loot": {
-    "tables": [
-      "minecraft:chests/village/village_cartographer"
-    ],
-    "chance": 1.0
-  },
   "trade": {
     "profession": "minecraft:cartographer",
     "level": 1,

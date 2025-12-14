@@ -7,9 +7,9 @@ import com.fireblaze.magic_overhaul.client.screen.utils.BlocklistScreen;
 import com.fireblaze.magic_overhaul.client.screen.utils.ScreenController;
 import com.fireblaze.magic_overhaul.client.screen.utils.ScreenSide;
 import com.fireblaze.magic_overhaul.menu.MonolithMenu;
+import com.fireblaze.magic_overhaul.runes.RuneDefinition;
 import com.fireblaze.magic_overhaul.util.MagicSourceBlocks;
 import com.fireblaze.magic_overhaul.util.MagicSourceBlockTags;
-import com.fireblaze.magic_overhaul.runes.RuneType;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -42,8 +42,8 @@ public class MonolithScreen extends AbstractContainerScreen<MonolithMenu> {
         super.init();
 
         MagicAccumulator acc = menu.monolith.getMagicAccumulator();
-        Map<Block, MagicSourceBlocks> blockPalette = menu.currentRune.blockPalette;
-        Map<TagKey<Block>, MagicSourceBlockTags> tagPalette = menu.currentRune.tagPalette;
+        Map<Block, MagicSourceBlocks> blockPalette = menu.currentRune.blockMap;
+        Map<TagKey<Block>, MagicSourceBlockTags> tagPalette = menu.currentRune.blockTagsMap;
 
         // Neuen Controller anlegen
         ScreenController controller = new ScreenController(
@@ -92,15 +92,15 @@ public class MonolithScreen extends AbstractContainerScreen<MonolithMenu> {
 
         int magicPower = magicAccumulator.getCurrentMagicPowerIncreaseRate();
 
-        RuneType rune = menu.currentRune;
-        if (rune == null || rune.getEnchantments().length == 0) return;
+        RuneDefinition rune = menu.currentRune;
+        if (rune == null || rune.enchantments.isEmpty()) return;
 
         int startY = 84;
         int barMaxWidth = 60;
         int barHeight = 6;
         blocklistScreen.render(graphics, mouseX, mouseY);
 
-        for (Enchantment ench : rune.getEnchantments()) {
+        for (Enchantment ench : rune.enchantments) {
             int enchX = x + 100;
             int enchY = y + startY - 3;
 
@@ -111,7 +111,7 @@ public class MonolithScreen extends AbstractContainerScreen<MonolithMenu> {
             int maxCost = com.fireblaze.magic_overhaul.util.MagicCostCalculator.calculateMagicRequirement(ench, ench.getMaxLevel());
 
             // Voller Gradient über die gesamte Bar
-            RuneColorTheme theme = rune.getTheme();
+            RuneColorTheme theme = rune.colorTheme;
             int startColor = theme.secondary;
             int endColor = theme.accent;
 
@@ -209,17 +209,17 @@ public class MonolithScreen extends AbstractContainerScreen<MonolithMenu> {
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         graphics.drawString(font, "Monolith", 4, 6, 0x404040, false);
 
-        RuneType rune = menu.currentRune;
-        if (rune != null && rune.getEnchantments().length > 0) {
+        RuneDefinition rune = menu.currentRune;
+        if (rune != null && !rune.enchantments.isEmpty()) {
             int y = 70; // Start Y Position
 
             // Überschrift mit Gradient
-            drawGradientString(graphics, "Rune Enchantments", 4, 56, rune.getTheme().secondary, rune.getTheme().accent, 0);
+            drawGradientString(graphics, "Rune Enchantments", 4, 56, rune.colorTheme.secondary, rune.colorTheme.accent, 0);
 
             y += 10;
-            for (Enchantment ench : rune.getEnchantments()) {
+            for (Enchantment ench : rune.enchantments) {
                 drawGradientString(graphics, Component.translatable(ench.getDescriptionId()).getString(), 8, y,
-                        rune.getTheme().secondary, rune.getTheme().accent, 15);
+                        rune.colorTheme.secondary, rune.colorTheme.accent, 15);
                 y += 15;
             }
         }

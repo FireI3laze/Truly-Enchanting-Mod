@@ -1,12 +1,13 @@
 package com.fireblaze.magic_overhaul.runes;
 
-import net.minecraft.world.level.block.Block;
+import net.minecraft.resources.ResourceLocation;
 
 public class RuneLoot {
-    public final String[] chestLootTables;
+
+    public final ResourceLocation[] chestLootTables;
     public final float chance;
 
-    public RuneLoot(String[] chestLootTables, float chance) {
+    public RuneLoot(ResourceLocation[] chestLootTables, float chance) {
         this.chestLootTables = chestLootTables;
         this.chance = chance;
     }

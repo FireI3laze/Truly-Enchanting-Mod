@@ -5,7 +5,7 @@ import com.fireblaze.magic_overhaul.blockentity.EnchantingTable.ArcaneEnchanting
 import com.fireblaze.magic_overhaul.blockentity.MonolithBlockEntity;
 import com.fireblaze.magic_overhaul.network.SyncMagicAccumulatorPacket;
 import com.fireblaze.magic_overhaul.registry.ModItems;
-import com.fireblaze.magic_overhaul.runes.RuneType;
+import com.fireblaze.magic_overhaul.runes.RuneDefinition;
 import com.fireblaze.magic_overhaul.util.BindingManager;
 import com.fireblaze.magic_overhaul.util.MagicCostCalculator;
 import net.minecraft.core.BlockPos;
@@ -135,8 +135,8 @@ public class MonolithBlock extends Block implements EntityBlock {
             //MagicOverhaul.LOGGER.debug("Monolith scanned magic power: {}", magicPower);
 
             // --- Alle Enchantments der Rune berechnen ---
-            RuneType rune = be.getCurrentRuneType();
-            if (rune != null) {
+            RuneDefinition runeDef = be.getCurrentRune();
+            if (runeDef != null) {
                 player.sendSystemMessage(Component.literal("§bMagical Energy: §f" + magicPower));
             } else {
                 player.sendSystemMessage(Component.literal("§cNo Rune set."));

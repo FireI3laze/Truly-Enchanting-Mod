@@ -205,7 +205,7 @@ public class ArcaneEnchantingTableBlockEntity extends BlockEntity {
             if (!(monBE instanceof MonolithBlockEntity monolith)) continue;
 
             float magicPower = monolith.calculateCurrentMagicPower();
-            var rune = monolith.getCurrentRuneType();
+            var rune = monolith.getCurrentRune();
 
             Map<Enchantment, Integer> unlocked =
                     (rune != null)

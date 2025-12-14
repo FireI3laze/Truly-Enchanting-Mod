@@ -1,7 +1,7 @@
 package com.fireblaze.magic_overhaul.blockentity.EnchantingTable;
 
 import com.fireblaze.magic_overhaul.blockentity.MonolithBlockEntity;
-import com.fireblaze.magic_overhaul.runes.RuneType;
+import com.fireblaze.magic_overhaul.runes.RuneLoader;
 import com.fireblaze.magic_overhaul.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -9,7 +9,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.*;
 
@@ -43,7 +42,7 @@ public class MagicAccumulator {
 
     public void updateMaxMagic(ArcaneEnchantingTableBlockEntity tableBE) {
         this.tableBE = tableBE;
-        int runeCount = RuneType.values().length;
+        int runeCount = RuneLoader.RUNE_DEFINITIONS.size();
         float capIncreasePerRune = magicPowerCapPerPlayerHard / runeCount;
         float percentagePower;
 
@@ -55,7 +54,7 @@ public class MagicAccumulator {
             BlockEntity monBE = Objects.requireNonNull(tableBE.getLevel()).getBlockEntity(mPos);
             if (!(monBE instanceof MonolithBlockEntity monolith)) continue;
             int monolithMagicPower = monolith.getMagicAccumulator().getCurrentMagicPowerIncreaseRate();
-            int maxRuneRequirement = MagicCostCalculator.getMaxMagicRequirement(monolith.getCurrentRuneType());
+            int maxRuneRequirement = MagicCostCalculator.getMaxMagicRequirement(monolith.getCurrentRune());
 
             if (maxRuneRequirement > monolithMagicPower) percentagePower = (float) monolithMagicPower / maxRuneRequirement;
             else percentagePower = 1.0f;

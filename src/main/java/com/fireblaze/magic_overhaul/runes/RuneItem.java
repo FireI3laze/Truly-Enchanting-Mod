@@ -2,6 +2,7 @@ package com.fireblaze.magic_overhaul.runes;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -14,40 +15,20 @@ import java.util.stream.Collectors;
 
 public class RuneItem extends Item {
 
-    private final RuneType runeType;
+    public static final String RUNE_ID_TAG = "RuneId";
 
-    public RuneItem(RuneType type) {
-        super(new Item.Properties());
-        this.runeType = type;
+    public RuneItem() {
+        super(new Item.Properties().stacksTo(1));
     }
 
-    @Override
-    public Component getName(ItemStack stack) {
-        // Dynamischer Name, z. B. basierend auf ENUM-Namen
-        String displayName = runeType.name()
-                .toLowerCase(Locale.ROOT)
-                .replace("_", " ");
-
-        // Erste Buchstaben groß
-        displayName = Arrays.stream(displayName.split(" "))
-                .map(s -> Character.toUpperCase(s.charAt(0)) + s.substring(1))
-                .collect(Collectors.joining(" "));
-
-        return Component.literal(displayName + " Rune");
+    public static void setRune(ItemStack stack, ResourceLocation runeId) {
+        stack.getOrCreateTag().putString(RUNE_ID_TAG, runeId.toString());
     }
 
-    @Override
-    public void appendHoverText(
-            ItemStack stack,
-            Level level,
-            List<Component> tooltip,
-            TooltipFlag flag
-    ) {
-        tooltip.add(Component.literal("Place in Monolith").withStyle(ChatFormatting.BLUE));
-    }
-
-
-    public RuneType getRuneType() {
-        return runeType;
+    public static RuneDefinition getRune(ItemStack stack) {
+        if (!stack.hasTag()) return null;
+        String id = stack.getTag().getString(RUNE_ID_TAG);
+        return RuneRegistry.get(ResourceLocation.tryParse(id));
     }
 }
+

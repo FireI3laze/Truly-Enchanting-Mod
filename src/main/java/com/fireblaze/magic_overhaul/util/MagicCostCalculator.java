@@ -1,6 +1,6 @@
 package com.fireblaze.magic_overhaul.util;
 
-import com.fireblaze.magic_overhaul.runes.RuneType;
+import com.fireblaze.magic_overhaul.runes.RuneDefinition;
 import net.minecraft.world.item.enchantment.Enchantment;
 
 import java.util.HashMap;
@@ -60,9 +60,9 @@ public class MagicCostCalculator {
         }
         return 0; // noch kein Level freigeschaltet
     }
-    public static Map<Enchantment, Integer> getUnlockedLevels(RuneType rune, float magicPower) {
+    public static Map<Enchantment, Integer> getUnlockedLevels(RuneDefinition rune, float magicPower) {
         Map<Enchantment, Integer> map = new HashMap<>();
-        for (Enchantment ench : rune.getEnchantments()) {
+        for (Enchantment ench : rune.enchantments) {
             int lvl = getUnlockedLevel(ench, magicPower);
             if(lvl > 0) {
                 map.put(ench, lvl);
@@ -71,9 +71,9 @@ public class MagicCostCalculator {
         return map;
     }
 
-    public static int getMaxMagicRequirement(RuneType rune) {
+    public static int getMaxMagicRequirement(RuneDefinition rune) {
         int maxRequirement = 0;
-        for (Enchantment ench : rune.getEnchantments()) {
+        for (Enchantment ench : rune.enchantments) {
             for (int level = 1; level <= ench.getMaxLevel(); level++) {
                 int cost = calculateMagicRequirement(ench, level);
                 if (cost > maxRequirement) {

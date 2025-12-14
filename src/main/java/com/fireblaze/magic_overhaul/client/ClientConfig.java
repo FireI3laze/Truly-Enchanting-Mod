@@ -36,7 +36,7 @@ public class ClientConfig {
     public Map<String, String> controllerSideMapping = new HashMap<>();
 
     // Datei-Pfad
-    private static final Path CONFIG_PATH = Path.of("config", "truly_magical", "arcane_enchanting_table_preferences.json");
+    private static final Path CONFIG_PATH = Path.of("config", "truly_enchanting", "arcane_enchanting_table_preferences.json");
 
     public static ClientConfig get() {
         if (INSTANCE == null) load();
@@ -66,7 +66,6 @@ public class ClientConfig {
                 INSTANCE.controllerSideMapping.put("enchantments", "LEFT");
             if (!INSTANCE.controllerSideMapping.containsKey("magicbar"))
                 INSTANCE.controllerSideMapping.put("magicbar", "TOP");
-            System.out.println("[MagicOverhaul] Loaded client config.");
         } catch (Exception e) {
             e.printStackTrace();
             INSTANCE = new ClientConfig();

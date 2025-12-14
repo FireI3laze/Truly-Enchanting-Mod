@@ -6,6 +6,7 @@ import com.fireblaze.magic_overhaul.registry.*;
 import com.fireblaze.magic_overhaul.client.screen.MonolithScreen;
 import com.fireblaze.magic_overhaul.client.screen.ArcaneEnchantingTableScreen;
 import com.fireblaze.magic_overhaul.client.renderer.MonolithRenderer;
+import com.fireblaze.magic_overhaul.runes.RuneLoader;
 import com.fireblaze.magic_overhaul.util.Registration;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -20,7 +21,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.slf4j.Logger;
+
+import java.io.File;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(MagicOverhaul.MODID)
@@ -60,9 +64,14 @@ public class MagicOverhaul
     }
 
 
-    private void commonSetup(final FMLCommonSetupEvent event)
-    {
+    private void commonSetup(final FMLCommonSetupEvent event) {
         Network.register();
+
+        // Config-Ordner für Runen
+        File runesDir = new File(FMLPaths.CONFIGDIR.get().toFile(), "truly_enchanting/runes");
+
+        // Runen laden – hier ModID angeben (z.B. "truly_enchanting")
+        RuneLoader.loadRunes(runesDir, "magic_overhaul");
     }
 
     // Add the example block item to the building blocks tab
@@ -75,7 +84,8 @@ public class MagicOverhaul
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event)
     {
-
+        // Lade Runen beim Serverstart
+        // ModRunes.loadAllRunes(event.getServer()); todo datapack driven
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent

@@ -2,10 +2,11 @@ package com.fireblaze.magic_overhaul.villager;
 
 import com.fireblaze.magic_overhaul.MagicOverhaul;
 import com.fireblaze.magic_overhaul.registry.ModRunes;
-import com.fireblaze.magic_overhaul.runes.RuneType;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.Entity;
+import com.fireblaze.magic_overhaul.runes.RuneDefinition;
+import com.fireblaze.magic_overhaul.runes.RuneLoader;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.entity.npc.VillagerTrades;
@@ -23,24 +24,31 @@ public class VillagerTradeHandler {
     public static void onVillagerTrades(VillagerTradesEvent event) {
         Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
 
-        for (RuneType rune : RuneType.values()) {
-            if (rune.runeTrade.profession == null || rune.runeTrade.professionLevel <= 0) continue;
+        for (RuneDefinition rune : RuneLoader.RUNE_DEFINITIONS.values()) {
+            if (rune.trade.profession == null || rune.trade.professionLevel <= 0) continue;
 
             // Prüfen, ob der aktuelle Villager-Typ passt
-            if (event.getType() == rune.runeTrade.profession) {
-                int level = rune.runeTrade.professionLevel;
+            if (event.getType() == rune.trade.profession) {
+                int level = rune.trade.professionLevel;
 
                 // Sicherstellen, dass es eine Trade-Liste für diese Stufe gibt
                 trades.computeIfAbsent(level, k -> new java.util.ArrayList<>());
 
                 // Trade hinzufügen: 3 Emeralds -> 1 Rune (du kannst Preis/Xp/MaxUses anpassen)
-                trades.get(level).add((trader, random) -> new MerchantOffer(
-                        new net.minecraft.world.item.ItemStack(Items.EMERALD, rune.runeTrade.price),
-                        new net.minecraft.world.item.ItemStack(ModRunes.RUNES.get(rune).get(), 1),
-                        12,  // maxUses
-                        5,   // villager XP
-                        0.05f // priceMultiplier
-                ));
+                trades.get(level).add((trader, random) -> {
+
+                    ItemStack runeStack = new ItemStack(ModRunes.RUNE.get(), 1);
+                    CompoundTag nbt = runeStack.getOrCreateTag();
+                    nbt.putString("rune_id", rune.id.toString());
+
+                    return new MerchantOffer(
+                            new ItemStack(Items.EMERALD, rune.trade.price),
+                            runeStack,
+                            12,   // maxUses
+                            5,    // villager XP
+                            0.05f // priceMultiplier
+                    );
+                });
             }
         }
 

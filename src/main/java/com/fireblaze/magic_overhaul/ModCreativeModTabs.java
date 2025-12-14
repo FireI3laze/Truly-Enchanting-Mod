@@ -25,9 +25,7 @@ public class ModCreativeModTabs {
                         pOutput.accept(ModItems.MAGIC_ESSENCE.get());
                         pOutput.accept(ModBlocks.MONOLITH.get());
                         pOutput.accept(ModBlocks.ARCANE_ENCHANTING_TABLE.get());
-                        for (RegistryObject<Item> rune : ModRunes.RUNES.values()) {
-                            pOutput.accept(rune.get());
-                        }
+                        pOutput.accept(ModRunes.RUNE.get());
                     }))
                     .build());
 

@@ -2,7 +2,7 @@ package com.fireblaze.magic_overhaul.enchanting;
 
 import com.fireblaze.magic_overhaul.blockentity.EnchantingTable.ArcaneEnchantingTableBlockEntity;
 import com.fireblaze.magic_overhaul.blockentity.MonolithBlockEntity;
-import com.fireblaze.magic_overhaul.runes.RuneType;
+import com.fireblaze.magic_overhaul.runes.RuneDefinition;
 import com.fireblaze.magic_overhaul.network.Network;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.ListTag;
@@ -45,7 +45,7 @@ public class LinkedMonolithManager {
             return false;
         }
 
-        RuneType rune = monolith.getCurrentRuneType();
+        RuneDefinition rune = monolith.getCurrentRune();
         if (rune == null) {
             return false;
         }
@@ -54,7 +54,7 @@ public class LinkedMonolithManager {
         for (BlockPos pos : linkedMonoliths) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof MonolithBlockEntity existingMonolith) {
-                RuneType existingRune = existingMonolith.getCurrentRuneType();
+                RuneDefinition existingRune = existingMonolith.getCurrentRune();
                 if (existingRune != null && existingRune == rune) {
                     return false; // Rune schon vorhanden
                 }
@@ -90,7 +90,7 @@ public class LinkedMonolithManager {
                 continue;
             }
 
-            if (monolith.getCurrentRuneType() == null) {
+            if (monolith.getCurrentRune() == null) {
                 it.remove();
                 changed = true;
             }
@@ -109,9 +109,9 @@ public class LinkedMonolithManager {
         for (BlockPos pos : linkedMonoliths) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof MonolithBlockEntity monolith) {
-                RuneType rune = monolith.getCurrentRuneType();
+                RuneDefinition rune = monolith.getCurrentRune();
                 if (rune != null) {
-                    for (Enchantment ench : rune.getEnchantments()) {
+                    for (Enchantment ench : rune.enchantments) {
                         int level = monolith.calculateCurrentMagicPower();
                         map.put(ench, Math.max(map.getOrDefault(ench, 0), level));
                     }
@@ -137,9 +137,9 @@ public class LinkedMonolithManager {
         for (BlockPos pos : linkedMonoliths) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof MonolithBlockEntity monolith) {
-                RuneType rune = monolith.getCurrentRuneType();
+                RuneDefinition rune = monolith.getCurrentRune();
                 if (rune != null) {
-                    for (Enchantment e : rune.getEnchantments()) {
+                    for (Enchantment e : rune.enchantments) {
                         if (e == enchantment) {
                             return pos;
                         }

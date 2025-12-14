@@ -5,13 +5,13 @@ import com.fireblaze.magic_overhaul.blockentity.EnchantingTable.MagicAccumulator
 import com.fireblaze.magic_overhaul.registry.ModBlockEntities;
 import com.fireblaze.magic_overhaul.menu.MonolithMenu;
 import com.fireblaze.magic_overhaul.registry.ModRunes;
+import com.fireblaze.magic_overhaul.runes.RuneDefinition;
+import com.fireblaze.magic_overhaul.runes.RuneItem;
+import com.fireblaze.magic_overhaul.runes.RuneLoader;
 import com.fireblaze.magic_overhaul.util.MagicSourceBlocks;
-import com.fireblaze.magic_overhaul.runes.RuneType;
-import com.fireblaze.magic_overhaul.util.ModTags;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -44,8 +44,8 @@ public class MonolithBlockEntity extends BlockEntity implements MenuProvider {
     private final ItemStackHandler items = new ItemStackHandler(1) {
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
-            //return true;
-            return stack.is(ModTags.Items.RUNES); //todo  fix that
+            return true;
+            //return stack.is(ModTags.Items.RUNES); //todo  fix that
         }
     };
 
@@ -211,21 +211,18 @@ public class MonolithBlockEntity extends BlockEntity implements MenuProvider {
 
     // ############## Runes ##############
 
-    public RuneType getCurrentRuneType() {
+    public RuneDefinition getCurrentRune() {
         ItemStack stack = items.getStackInSlot(0);
-        if (stack.isEmpty()) {
-            return null;
-        }
 
-        Item item = stack.getItem();
-        String id = BuiltInRegistries.ITEM.getKey(item).getPath();
-        for (RuneType rune : RuneType.values()) {
-            if (rune.id.equalsIgnoreCase(id.replace("_rune", ""))) {
-                return rune;
-            }
-        }
-        return null;
+        if (stack.isEmpty()) return null;
+        if (!(stack.getItem() instanceof RuneItem)) return null;
+        if (!stack.hasTag() || !stack.getTag().contains("rune_id")) return null;
+
+        String runeId = stack.getTag().getString("rune_id");
+        return RuneLoader.getRuneDefinition(runeId); // Map<String, RuneDefinition> in ModRunes
     }
+
+
 
     // ############## Pathfinding/Flood-Fill-Scan ##############
 
@@ -247,7 +244,10 @@ public class MonolithBlockEntity extends BlockEntity implements MenuProvider {
         return accumulator;
     }
     public int scanSurroundingBlocks(int scanCap, int radiusCap) {
-        accumulator.scan(level, this.worldPosition, this.getCurrentRuneType().blockPalette, this.getCurrentRuneType().tagPalette, scanCap, radiusCap);
+        if (this.getCurrentRune() == null) {
+            return 0;
+        }
+        accumulator.scan(level, this.worldPosition, this.getCurrentRune().blockMap, this.getCurrentRune().blockTagsMap, scanCap, radiusCap);
         setChanged();
 
         return accumulator.getCurrentMagicPowerIncreaseRate();
@@ -273,18 +273,17 @@ public class MonolithBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     public int getMaxPowerForBlock(Block block) {
-        RuneType rune = getCurrentRuneType();
+        RuneDefinition rune = getCurrentRune();
         if (rune == null) return 0;
-        MagicSourceBlocks rb = rune.blockPalette.get(block);
+        MagicSourceBlocks rb = rune.blockMap.get(block);
         return rb != null ? rb.magicCap : 0;
     }
 
-    public void insertRune(RuneType type) {
-        if (type == null) return;
+    public void insertRune(RuneDefinition rune) {
+        if (rune == null) return;
 
         // Rune-Item finden
-        Item runeItem = ModRunes.getItemFromType(type);
-        if (runeItem == null) return;
+        Item runeItem = ModRunes.RUNE.get();
 
         ItemStack stack = new ItemStack(runeItem);
         stack.setCount(1);
