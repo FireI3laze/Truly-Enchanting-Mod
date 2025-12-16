@@ -45,12 +45,13 @@ public class ConsumeMagicEssencePacket {
             if (actual <= 0) return;
 
             // bound table
-            var pos = BindingManager.getBoundTable(player);
-            if (pos == null) return;
+            var boundTable = BindingManager.getBoundTable(player);
+            if (boundTable == null || boundTable.pos() == null || boundTable.dimension() == null) return;
             var level = player.level();
-            var be = level.getBlockEntity(pos);
+            if (!(level.dimension() == boundTable.dimension())) return;
+            var be = level.getBlockEntity(boundTable.pos());
             if (!(be instanceof ArcaneEnchantingTableBlockEntity tableBE)) return;
-            if (!(pos.equals(tableBE.getBlockPos()))) return;
+            if (!(boundTable.pos().equals(tableBE.getBlockPos()))) return;
 
             // perform conversion: add magic power and consume items
             if (!tableBE.getMagicAccumulator().magicEssenceToMagicPower(actual)) return;

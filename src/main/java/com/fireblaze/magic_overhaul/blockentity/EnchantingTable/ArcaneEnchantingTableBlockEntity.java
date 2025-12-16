@@ -166,11 +166,6 @@ public class ArcaneEnchantingTableBlockEntity extends BlockEntity {
         return added;
     }
 
-    /** Liefert alle freigeschalteten Enchantments */
-    public Map<Enchantment, Integer> getUnlockedEnchantments() {
-        return monolithManager.getAllUnlockedEnchantments();
-    }
-
     public LinkedMonolithManager getLinkedMonolithManager() {
         // Client-seitig sicherstellen, dass die Liste initialisiert ist
         if (level != null && level.isClientSide && !monolithManager.isInitialized()) {

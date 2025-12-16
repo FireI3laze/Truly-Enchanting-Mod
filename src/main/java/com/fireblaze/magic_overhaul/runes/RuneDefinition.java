@@ -20,7 +20,7 @@ public class RuneDefinition {
     public final String displayName;
     public final RuneColorTheme colorTheme;
 
-    public final List<Enchantment> enchantments;
+    public List<Enchantment> enchantments;
     public final List<MagicSourceBlocks> blocks;
     public final List<MagicSourceBlockTags> blockTags;
     public final List<ResourceLocation> structures;

@@ -262,4 +262,23 @@ public class MonolithScreen extends AbstractContainerScreen<MonolithMenu> {
         return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
+    public void updateRune(RuneDefinition rune) {
+        if (rune == null) return;
+
+        MagicAccumulator acc = menu.monolith.getMagicAccumulator();
+        Map<Block, MagicSourceBlocks> blockPalette = rune.blockMap;
+        Map<TagKey<Block>, MagicSourceBlockTags> tagPalette = rune.blockTagsMap;
+
+        blocklistScreen = new BlocklistScreen(
+                blocklistScreen.left,
+                blocklistScreen.top,
+                blocklistScreen.blockListWidth,
+                blocklistScreen.imageHeight,
+                rowHeight,
+                font,
+                acc,
+                blockPalette,
+                tagPalette
+        );
+    }
 }

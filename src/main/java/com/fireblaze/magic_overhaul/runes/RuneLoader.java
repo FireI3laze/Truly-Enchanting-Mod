@@ -1,10 +1,14 @@
 package com.fireblaze.magic_overhaul.runes;
 
+import com.fireblaze.magic_overhaul.network.Network;
+import com.fireblaze.magic_overhaul.network.SyncRuneDefinitionsPacket;
 import com.fireblaze.magic_overhaul.runes.RuneDefinition;
 import com.fireblaze.magic_overhaul.runes.RuneJsonParser;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.io.File;
 import java.io.FileReader;
@@ -12,6 +16,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -21,6 +26,12 @@ public class RuneLoader {
 
     public static void reloadRunes(File runesDir, String modid) {
         loadRunes(runesDir, modid);
+
+        //SyncRuneDefinitionsPacket packet = todo
+        //        new SyncRuneDefinitionsPacket(RuneLoader.getRuneDefinitions());
+
+        //boolean isSinglePlayer = Minecraft.getInstance().isLocalServer();
+        //if (!isSinglePlayer) Network.CHANNEL.send(PacketDistributor.ALL.noArg(), packet);
     }
 
     public static void loadRunes(File runesDir, String modid) {
@@ -100,5 +111,13 @@ public class RuneLoader {
 
     public static RuneDefinition getRuneDefinition(String id) {
         return RUNE_DEFINITIONS.get(id);
+    }
+    public static Map<String, RuneDefinition> getRuneDefinitions() {
+        return RUNE_DEFINITIONS;
+    }
+
+    public static void replaceAll(Map<String, RuneDefinition> runes) {
+        RUNE_DEFINITIONS.clear();
+        RUNE_DEFINITIONS.putAll(runes);
     }
 }

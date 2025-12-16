@@ -3,32 +3,28 @@ package com.fireblaze.magic_overhaul;
 import com.fireblaze.magic_overhaul.blockentity.EnchantingTable.ArcaneEnchantingTableBlockEntity;
 import com.fireblaze.magic_overhaul.network.Network;
 import com.fireblaze.magic_overhaul.network.SyncBindingPacket;
-import com.fireblaze.magic_overhaul.network.SyncMagicAccumulatorPacket;
+import com.fireblaze.magic_overhaul.network.SyncRuneDefinitionsPacket;
 import com.fireblaze.magic_overhaul.registry.ModEnchantments;
+import com.fireblaze.magic_overhaul.runes.RuneLoader;
 import com.fireblaze.magic_overhaul.util.BindingManager;
-import com.fireblaze.magic_overhaul.util.ClientBindingState;
+import com.fireblaze.magic_overhaul.util.BoundTable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EnchantmentTableBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +36,17 @@ public class ModEvents {
     public static void onPlayerLogin(net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        BlockPos bound = BindingManager.getBoundTable(event.getEntity());
+        BoundTable boundTable = BindingManager.getBoundTable(event.getEntity());
+        if (boundTable == null || boundTable.pos() == null || boundTable.dimension() == null) return;
 
-        Network.sendToClient(player, new SyncBindingPacket(bound));
+        Network.sendToClient(player, new SyncBindingPacket(boundTable.pos(), boundTable.dimension()));
+        SyncRuneDefinitionsPacket packet =
+                new SyncRuneDefinitionsPacket(RuneLoader.getRuneDefinitions());
+
+        Network.CHANNEL.send(
+                PacketDistributor.PLAYER.with(() -> player),
+                packet
+        );
     }
 
     /*
@@ -94,10 +98,14 @@ public class ModEvents {
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (!(event.player instanceof ServerPlayer player)) return;
 
-        BlockPos pos = BindingManager.getBoundTable(player);
-        if (pos == null) return;
+        BoundTable boundTable = BindingManager.getBoundTable(player);
+        if (boundTable == null || boundTable.pos() == null || boundTable.dimension() == null) return;
 
-        BlockEntity be = player.level().getBlockEntity(pos);
+        // Dimension des Tables abrufen
+        ServerLevel tableLevel = player.getServer().getLevel(boundTable.dimension());
+        if (tableLevel == null) return;
+
+        BlockEntity be = tableLevel.getBlockEntity(boundTable.pos());
         if (!(be instanceof ArcaneEnchantingTableBlockEntity tableBE)) return;
 
         float magicPower = tableBE.getMagicAccumulator().getCurrentMagicPower();
@@ -122,7 +130,7 @@ public class ModEvents {
                 tableBE.getMagicAccumulator().setAccumulatedMagicPower(magicPower - 1);
                 stack.setDamageValue(damage - 1);
 
-                // Magische Kraft neu abrufen, damit mehrere Items pro Tick korrekt verbraucht werden
+                // Magische Kraft neu abrufen
                 magicPower = tableBE.getMagicAccumulator().getCurrentMagicPower();
                 if (magicPower <= 1) break; // keine Magie mehr übrig
             }

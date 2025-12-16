@@ -1,18 +1,16 @@
 package com.fireblaze.magic_overhaul.network;
 
 import com.fireblaze.magic_overhaul.blockentity.EnchantingTable.ArcaneEnchantingTableBlockEntity;
+import com.fireblaze.magic_overhaul.client.RunePacketHandlerClient;
 import com.fireblaze.magic_overhaul.util.BindingManager;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public class Network {
     private static final String PROTOCOL = "1.0";
@@ -79,6 +77,30 @@ public class Network {
                 SyncBindingPacket::decode,
                 SyncBindingPacket::handle
         );
+
+        CHANNEL.registerMessage(id++,
+                RunePacketData.class,
+                RunePacketData::encode,
+                RunePacketData::decode,
+                (packet, ctx) -> {
+                    ctx.get().enqueueWork(() -> {
+                        if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+                            RunePacketHandlerClient.handleRunePacket(packet);
+                        }
+                    });
+                    ctx.get().setPacketHandled(true);
+                }
+        );
+
+        CHANNEL.messageBuilder(
+                        SyncRuneDefinitionsPacket.class,
+                        id++,
+                        NetworkDirection.PLAY_TO_CLIENT
+                )
+                .encoder(SyncRuneDefinitionsPacket::encode)
+                .decoder(SyncRuneDefinitionsPacket::decode)
+                .consumerMainThread(SyncRuneDefinitionsPacket::handle)
+                .add();
     }
 
     public static void sendToServer(Object msg) {
@@ -95,7 +117,7 @@ public class Network {
 
         be.getLevel().players().forEach(player -> {
             if (BindingManager.getBoundTable(player) == null) return;
-            if (BindingManager.getBoundTable(player).equals(be.getBlockPos())) {
+            if (BindingManager.getBoundTable(player).pos().equals(be.getBlockPos())) {
                 sendToClient((ServerPlayer) player, packet);
             }
         });

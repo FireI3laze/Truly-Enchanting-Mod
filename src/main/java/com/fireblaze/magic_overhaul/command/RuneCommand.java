@@ -1,6 +1,8 @@
 package com.fireblaze.magic_overhaul.command;
 
 import com.fireblaze.magic_overhaul.MagicOverhaul;
+import com.fireblaze.magic_overhaul.network.Network;
+import com.fireblaze.magic_overhaul.network.SyncRuneDefinitionsPacket;
 import com.fireblaze.magic_overhaul.runes.RuneDefinition;
 import com.fireblaze.magic_overhaul.runes.RuneLoader;
 import com.fireblaze.magic_overhaul.registry.ModRunes;
@@ -11,6 +13,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -20,8 +23,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.File;
@@ -29,6 +32,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Objects;
 
 public class RuneCommand {
@@ -480,6 +484,8 @@ public class RuneCommand {
         Path jsonPath = getRuneJsonPath(runeId);
         if (!Files.exists(jsonPath)) return false;
 
+        boolean changed = false;
+
         try (Reader reader = Files.newBufferedReader(jsonPath)) {
             com.google.gson.JsonObject root =
                     com.google.gson.JsonParser.parseReader(reader).getAsJsonObject();
@@ -507,6 +513,7 @@ public class RuneCommand {
 
                     array.add(obj);
                 }
+                changed = true;
             }
 
             /* ---------- REMOVE ---------- */
@@ -517,6 +524,7 @@ public class RuneCommand {
                     if (field.equals("enchantments")) {
                         if (!array.get(i).isJsonNull() && array.get(i).getAsString().equals(value)) {
                             array.remove(i);
+                            changed = true;
                             break;
                         }
                     }
@@ -528,6 +536,7 @@ public class RuneCommand {
 
                         if (obj.has(key) && !obj.get(key).isJsonNull() && obj.get(key).getAsString().equals(value)) {
                             array.remove(i);
+                            changed = true;
                             break;
                         }
                     }
@@ -540,6 +549,20 @@ public class RuneCommand {
                         .setPrettyPrinting()
                         .create()
                         .toJson(root, writer);
+            }
+
+            if (changed) {
+                // RuneLoader Map updaten
+                RuneDefinition rune = RuneLoader.getRuneDefinition(runeId.toString());
+                if (rune != null) RuneLoader.RUNE_DEFINITIONS.put(runeId.toString(), rune);
+
+                // Packet an den Spieler senden
+                assert rune != null;
+                SyncRuneDefinitionsPacket packet =
+                        new SyncRuneDefinitionsPacket(Map.of(runeId.toString(), rune));
+
+                boolean isSinglePlayer = Minecraft.getInstance().isLocalServer();
+                if (!isSinglePlayer) Network.CHANNEL.send(PacketDistributor.ALL.noArg(), packet);
             }
 
             return true;

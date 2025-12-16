@@ -23,7 +23,7 @@ public class BlocklistScreen {
     private int imageWidth;
     public int imageHeight;
     public int rowHeight;
-    private int blockListWidth;
+    public int blockListWidth;
 
     // --- State ---
     private int scrollOffset = 0;
@@ -269,5 +269,4 @@ public class BlocklistScreen {
         }
         return Integer.MAX_VALUE;
     }
-
 }

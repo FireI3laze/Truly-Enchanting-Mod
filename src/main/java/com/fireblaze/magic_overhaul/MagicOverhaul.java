@@ -80,10 +80,10 @@ public class MagicOverhaul
             );
 
             // 1) Default-Runen kopieren (falls nötig)
-            RuneLoader.ensureDefaultRunes(runesDir, "magic_overhaul");
+            RuneLoader.ensureDefaultRunes(runesDir, MODID);
 
             // 2) Runen aus Config laden
-            RuneLoader.loadRunes(runesDir, "magic_overhaul");
+            RuneLoader.loadRunes(runesDir, MODID);
         });
     }
 

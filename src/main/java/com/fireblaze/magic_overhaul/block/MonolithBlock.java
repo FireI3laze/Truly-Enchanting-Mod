@@ -1,22 +1,16 @@
 package com.fireblaze.magic_overhaul.block;
 
-import com.fireblaze.magic_overhaul.MagicOverhaul;
-import com.fireblaze.magic_overhaul.blockentity.EnchantingTable.ArcaneEnchantingTableBlockEntity;
 import com.fireblaze.magic_overhaul.blockentity.MonolithBlockEntity;
 import com.fireblaze.magic_overhaul.network.SyncMagicAccumulatorPacket;
 import com.fireblaze.magic_overhaul.registry.ModItems;
-import com.fireblaze.magic_overhaul.runes.RuneDefinition;
-import com.fireblaze.magic_overhaul.util.BindingManager;
 import com.fireblaze.magic_overhaul.util.MagicCostCalculator;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -33,8 +27,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
-
-import static com.fireblaze.magic_overhaul.util.MagicCostCalculator.calculateMagicRequirement;
 
 public class MonolithBlock extends Block implements EntityBlock {
     // Ganz oben in deiner Block-Klasse
@@ -144,11 +136,12 @@ public class MonolithBlock extends Block implements EntityBlock {
             //MagicOverhaul.LOGGER.debug("Monolith scanned magic power: {}", magicPower);
 
             // --- Alle Enchantments der Rune berechnen ---
-            RuneDefinition runeDef = be.getCurrentRune();
             //if (runeDef == null) player.sendSystemMessage(Component.literal("§cNo Rune set."));
 
             if (player instanceof ServerPlayer serverPlayer) {
                 SyncMagicAccumulatorPacket.sendToClient(serverPlayer, be.getBlockPos(), be.getMagicAccumulator());
+
+                // Open GUI
                 NetworkHooks.openScreen(serverPlayer, be, be.getBlockPos());
             }
         }

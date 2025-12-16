@@ -105,6 +105,7 @@ public class ArcaneEnchantingTableBlock extends Block implements EntityBlock {
             if (be instanceof ArcaneEnchantingTableBlockEntity tableBE) {
                 tableBE.dropInventory(level, pos);
             }
+            assert be != null;
             BindingManager.removeBindingsForTable(level, pos);
 
             level.destroyBlock(pos, true);

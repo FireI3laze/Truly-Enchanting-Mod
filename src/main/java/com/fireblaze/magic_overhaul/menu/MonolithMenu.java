@@ -16,7 +16,7 @@ import net.minecraftforge.items.SlotItemHandler;
 
 public class MonolithMenu extends AbstractContainerMenu {
 
-    private final BlockPos pos;
+    public final BlockPos pos;
     public final MonolithBlockEntity monolith;
     public RuneDefinition currentRune;
 

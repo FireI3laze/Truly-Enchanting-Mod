@@ -4,9 +4,9 @@ import com.fireblaze.magic_overhaul.block.MonolithBlock;
 import com.fireblaze.magic_overhaul.blockentity.EnchantingTable.ArcaneEnchantingTableBlockEntity;
 import com.fireblaze.magic_overhaul.blockentity.MonolithBlockEntity;
 import com.fireblaze.magic_overhaul.network.Network;
-import com.fireblaze.magic_overhaul.network.SyncBindingPacket;
 import com.fireblaze.magic_overhaul.registry.ModSounds;
 import com.fireblaze.magic_overhaul.util.BindingManager;
+import com.fireblaze.magic_overhaul.util.BoundTable;
 import com.fireblaze.magic_overhaul.util.ClientBindingState;
 import com.fireblaze.magic_overhaul.util.MagicCostCalculator;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -18,7 +18,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -39,11 +38,8 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.world.level.block.state.properties.Half;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
@@ -55,10 +51,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.joml.Matrix4f;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Mod.EventBusSubscriber(modid = "magic_overhaul")
 public class WandItem extends Item {
@@ -329,7 +322,7 @@ public class WandItem extends Item {
 
             if (be instanceof ArcaneEnchantingTableBlockEntity table) {
 
-                if(!checkBinding(player, table, level)) return InteractionResult.SUCCESS;
+                if(!checkBinding(player, table, Objects.requireNonNull(table.getLevel()))) return InteractionResult.SUCCESS;
 
                 if (stack.hasTag() && stack.getTag().contains("linkedMonolith")) {
                     long l = stack.getTag().getLong("linkedMonolith");
@@ -395,14 +388,18 @@ public class WandItem extends Item {
             if(level.isClientSide) return InteractionResult.SUCCESS;
             if(!(be instanceof ArcaneEnchantingTableBlockEntity table)) return InteractionResult.PASS;
 
-            BlockPos currentBinding = BindingManager.getBoundTable(player);
+            BoundTable currentBinding = BindingManager.getBoundTable(player);
+            BoundTable boundTable = new BoundTable(table.getBlockPos(), Objects.requireNonNull(table.getLevel()).dimension());
 
-            if(currentBinding != null && !currentBinding.equals(table.getBlockPos())) {
+            //if (currentBinding != null) System.out.println(currentBinding + " | " + currentBinding.equals(boundTable));
+            //else System.out.println("binding is null");
+
+            if(currentBinding != null && !currentBinding.equals(boundTable)) {
                     player.displayClientMessage(Component.literal("You are already bound to another table!"), true);
                 return InteractionResult.SUCCESS;
             }
 
-            if(currentBinding != null && currentBinding.equals(table.getBlockPos())) {
+            if(currentBinding != null && currentBinding.equals(boundTable)) {
                 // trennen
                 BindingManager.unbind(player);
                     player.displayClientMessage(Component.literal("Unbound from this table."), true);
@@ -421,11 +418,12 @@ public class WandItem extends Item {
 
     private boolean checkBinding(Player player, ArcaneEnchantingTableBlockEntity tableBE, Level level) {
         if (level.isClientSide) return false;
+        BoundTable boundTable = new BoundTable(tableBE.getBlockPos(), level.dimension());
+
         if (BindingManager.getBoundTable(player) == null) {
             player.displayClientMessage(Component.literal("Not bound to any table. Switch Wand Mode to toggle Binding"), true);
         }
-
-        else if (!BindingManager.getBoundTable(player).equals(tableBE.getBlockPos()) && !level.isClientSide) {
+        else if (!BindingManager.getBoundTable(player).equals(boundTable)) {
             player.displayClientMessage(Component.literal("Not bound to this table. Switch Wand Mode to toggle Binding"), true);
             return false;
         }
@@ -770,11 +768,11 @@ public class WandItem extends Item {
                 renderBoxAroundBlock(poseStack, camera, pos, buffer, 1, 0, 0);
             }
 
-            BlockPos boundTable = ClientBindingState.getBoundTable();
-            if (boundTable == null) return;
+            BoundTable boundTable = ClientBindingState.getBoundTable();
+            if (boundTable == null || boundTable.pos() == null || boundTable.dimension() == null || boundTable.dimension() != mc.player.level().dimension()) return;
 
             Level level = mc.player.level();
-            BlockEntity be = level.getBlockEntity(boundTable);
+            BlockEntity be = level.getBlockEntity(boundTable.pos());
             if (!(be instanceof ArcaneEnchantingTableBlockEntity tableBE)) return;
 
             List<BlockPos> temp = new ArrayList<>(tableBE.getLinkedMonolithManager().getLinkedMonoliths());

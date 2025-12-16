@@ -100,6 +100,7 @@ public class LinkedMonolithManager {
             arcaneEnchantingTable.setChanged();
         }
 
+        System.out.println(linkedMonoliths);
         Network.syncLinkedMonoliths(arcaneEnchantingTable);
     }
 
