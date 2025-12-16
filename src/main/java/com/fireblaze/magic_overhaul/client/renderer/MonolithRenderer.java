@@ -30,7 +30,7 @@ public class MonolithRenderer implements BlockEntityRenderer<MonolithBlockEntity
         BakedModel model = itemRenderer.getModel(stack, entity.getLevel(), null, 0); // 0 ist der seed
 
         poseStack.pushPose();
-        poseStack.translate(0.5, 2.2, 0.5);
+        poseStack.translate(0.5, 1.95, 0.5);
 
         float time = (Objects.requireNonNull(entity.getLevel()).getGameTime() + partialTicks) * 5f;
         poseStack.mulPose(Axis.YP.rotationDegrees(time));

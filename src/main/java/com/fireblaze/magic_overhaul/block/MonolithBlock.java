@@ -44,7 +44,7 @@ public class MonolithBlock extends Block implements EntityBlock {
 
     }
 
-    private static final VoxelShape SHAPE = Block.box(4, 0, 4, 12, 16, 12);
+    private static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 16, 14);
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
