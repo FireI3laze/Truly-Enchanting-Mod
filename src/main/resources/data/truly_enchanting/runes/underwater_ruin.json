@@ -1,0 +1,70 @@
+{
+  "id": "truly_enchanting:underwater_ruin",
+  "color": "#00CED1",
+  "enchantments": [
+    "minecraft:impaling",
+    "minecraft:riptide",
+    "minecraft:channeling",
+    "minecraft:loyalty"
+  ],
+  "blocks": [
+    {
+      "block": "minecraft:prismarine",
+      "min": 2,
+      "max": 100
+    },
+    {
+      "block": "minecraft:prismarine_bricks",
+      "min": 2,
+      "max": 100
+    },
+    {
+      "block": "minecraft:dark_prismarine",
+      "min": 4,
+      "max": 100
+    },
+    {
+      "block": "minecraft:sea_lantern",
+      "min": 5,
+      "max": 50
+    },
+    {
+      "block": "minecraft:kelp",
+      "min": 1,
+      "max": 200
+    },
+    {
+      "block": "minecraft:water",
+      "min": 1,
+      "max": 200
+    },
+    {
+      "block": "minecraft:cut_sandstone",
+      "min": 2,
+      "max": 50
+    },
+    {
+      "block": "minecraft:sand",
+      "min": 1,
+      "max": 100
+    },
+    {
+      "block": "minecraft:gravel",
+      "min": 1,
+      "max": 100
+    }
+  ],
+  "block_tags": [],
+  "loot": {
+    "tables": [
+      "minecraft:chests/underwater_ruin_big",
+      "minecraft:chests/underwater_ruin_small"
+    ],
+    "chance": 0.5
+  },
+  "trade": {
+    "profession": null,
+    "level": 0,
+    "max_uses": 0
+  }
+}

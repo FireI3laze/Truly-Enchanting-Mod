@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CMC",
+    "OEO"
+  ],
+  "key": {
+    "E": {
+      "item": "minecraft:enchanting_table"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "C": {
+      "tag": "minecraft:candles"
+    },
+    "M": {
+      "type": "forge:nbt",
+      "item": "truly_enchanting:magic_essence",
+      "nbt": "{Charged:1b}"
+    }
+  },
+  "result": {
+    "item": "truly_enchanting:arcane_enchanting_table",
+    "count": 1
+  }
+}

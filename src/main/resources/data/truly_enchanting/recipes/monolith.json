@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "WMW",
+    "WCW",
+    "SCS"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:cobblestone_stairs"
+    },
+    "C": {
+      "item": "minecraft:cobblestone"
+    },
+    "W": {
+      "item": "minecraft:cobblestone_wall"
+    },
+    "M": {
+      "item": "truly_enchanting:magic_essence"
+    }
+  },
+  "result": {
+    "item": "truly_enchanting:monolith",
+    "count": 1
+  }
+}

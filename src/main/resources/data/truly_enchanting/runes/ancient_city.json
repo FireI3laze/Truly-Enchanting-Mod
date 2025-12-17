@@ -1,0 +1,108 @@
+{
+  "id": "truly_enchanting:ancient_city",
+  "color": "#4B0082",
+  "enchantments": [
+    "minecraft:protection",
+    "minecraft:swift_sneak"
+  ],
+  "blocks": [
+    {
+      "block": "minecraft:sculk",
+      "min": 3,
+      "max": 200
+    },
+    {
+      "block": "minecraft:sculk_vein",
+      "min": 3,
+      "max": 120
+    },
+    {
+      "block": "minecraft:sculk_catalyst",
+      "min": 10,
+      "max": 150
+    },
+    {
+      "block": "minecraft:sculk_sensor",
+      "min": 16,
+      "max": 160
+    },
+    {
+      "block": "minecraft:sculk_shrieker",
+      "min": 16,
+      "max": 160
+    },
+    {
+      "block": "minecraft:deepslate",
+      "min": 1,
+      "max": 200
+    },
+    {
+      "block": "minecraft:cobbled_deepslate",
+      "min": 1,
+      "max": 100
+    },
+    {
+      "block": "minecraft:deepslate_tiles",
+      "min": 2,
+      "max": 100
+    },
+    {
+      "block": "minecraft:deepslate_bricks",
+      "min": 2,
+      "max": 100
+    },
+    {
+      "block": "minecraft:soul_sand",
+      "min": 2,
+      "max": 50
+    },
+    {
+      "block": "minecraft:soul_lantern",
+      "min": 5,
+      "max": 150
+    },
+    {
+      "block": "minecraft:reinforced_deepslate",
+      "min": 100,
+      "max": 500
+    },
+    {
+      "block": "minecraft:soul_campfire",
+      "min": 10,
+      "max": 100
+    },
+    {
+      "block": "minecraft:soul_fire",
+      "min": 10,
+      "max": 100
+    },
+    {
+      "block": "minecraft:polished_deepslate",
+      "min": 1,
+      "max": 100
+    }
+  ],
+  "block_tags": [
+    {
+      "tag": "minecraft:wool",
+      "min": 2,
+      "max": 100
+    },
+    {
+      "tag": "minecraft:candles",
+      "min": 4,
+      "max": 200
+    }
+  ],
+  "loot": {
+    "tables": [
+      "minecraft:chests/ancient_city"
+    ],
+    "chance": 0.5
+  },
+  "trade": {
+    "profession": null,
+    "level": 0,
+    "max_uses": 0
+  }
+}

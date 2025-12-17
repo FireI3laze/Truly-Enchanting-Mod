@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "minecraft:amethyst_shard" },
+    { "item": "minecraft:glowstone_dust" },
+    { "item": "minecraft:black_dye" }
+  ],
+  "result": {
+    "item": "truly_enchanting:wand",
+    "count": 1
+  }
+}

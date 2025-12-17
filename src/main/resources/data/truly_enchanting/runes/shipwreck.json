@@ -1,0 +1,64 @@
+{
+  "id": "truly_enchanting:shipwreck",
+  "color": "#1E90FF",
+  "enchantments": [
+    "minecraft:aqua_affinity",
+    "minecraft:respiration",
+    "minecraft:depth_strider"
+  ],
+  "blocks": [
+    {
+      "block": "minecraft:water",
+      "min": 1,
+      "max": 200
+    },
+    {
+      "block": "minecraft:chest",
+      "min": 5,
+      "max": 30
+    },
+    {
+      "block": "minecraft:lantern",
+      "min": 2,
+      "max": 20
+    }
+  ],
+  "block_tags": [
+    {
+      "tag": "minecraft:planks",
+      "min": 1,
+      "max": 100
+    },
+    {
+      "tag": "minecraft:coral_blocks",
+      "min": 5,
+      "max": 200
+    },
+    {
+      "tag": "minecraft:coral_plants",
+      "min": 5,
+      "max": 100
+    },
+    {
+      "tag": "minecraft:corals",
+      "min": 5,
+      "max": 100
+    },
+    {
+      "tag": "minecraft:wall_corals",
+      "min": 5,
+      "max": 100
+    }
+  ],
+  "loot": {
+    "tables": [
+      "minecraft:chests/shipwreck_treasure"
+    ],
+    "chance": 0.33
+  },
+  "trade": {
+    "profession": null,
+    "level": 0,
+    "max_uses": 0
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "id": "truly_enchanting:village",
+  "color": "#8040FF",
+  "enchantments": [
+    "minecraft:efficiency",
+    "minecraft:power",
+    "minecraft:punch"
+  ],
+  "blocks": [
+    {
+      "block": "minecraft:composter",
+      "min": 25,
+      "max": 50
+    },
+    {
+      "block": "minecraft:smithing_table",
+      "min": 25,
+      "max": 50
+    },
+    {
+      "block": "minecraft:cartography_table",
+      "min": 25,
+      "max": 50
+    },
+    {
+      "block": "minecraft:fletching_table",
+      "min": 25,
+      "max": 50
+    },
+    {
+      "block": "minecraft:lectern",
+      "min": 25,
+      "max": 50
+    },
+    {
+      "block": "minecraft:cauldron",
+      "min": 25,
+      "max": 50
+    },
+    {
+      "block": "minecraft:glass",
+      "min": 2,
+      "max": 50
+    },
+    {
+      "block": "minecraft:glass_pane",
+      "min": 2,
+      "max": 50
+    },
+    {
+      "block": "minecraft:grass_block",
+      "min": 1,
+      "max": 200
+    },
+    {
+      "block": "minecraft:grass",
+      "min": 1,
+      "max": 50
+    },
+    {
+      "block": "minecraft:bell",
+      "min": 40,
+      "max": 40
+    },
+    {
+      "block": "minecraft:farmland",
+      "min": 2,
+      "max": 100
+    },
+    {
+      "block": "minecraft:wheat",
+      "min": 2,
+      "max": 50
+    },
+    {
+      "block": "minecraft:carrots",
+      "min": 2,
+      "max": 50
+    },
+    {
+      "block": "minecraft:potatoes",
+      "min": 2,
+      "max": 50
+    },
+    {
+      "block": "minecraft:beetroots",
+      "min": 2,
+      "max": 50
+    },
+    {
+      "block": "minecraft:campfire",
+      "min": 10,
+      "max": 50
+    },
+    {
+      "block": "minecraft:anvil",
+      "min": 25,
+      "max": 50
+    }
+  ],
+  "block_tags": [
+    {
+      "tag": "minecraft:logs_that_burn",
+      "min": 2,
+      "max": 150
+    },
+    {
+      "tag": "minecraft:planks",
+      "min": 1,
+      "max": 150
+    },
+    {
+      "tag": "minecraft:wooden_doors",
+      "min": 2,
+      "max": 20
+    }
+  ],
+  "trade": {
+    "profession": "minecraft:cartographer",
+    "level": 1,
+    "max_uses": 16
+  }
+}

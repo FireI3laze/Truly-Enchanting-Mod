@@ -1,0 +1,69 @@
+{
+  "id": "truly_enchanting:spawner_room",
+  "color": "#FF0000",
+  "enchantments": [
+    "minecraft:sharpness",
+    "minecraft:smite",
+    "minecraft:bane_of_arthropods",
+    "minecraft:sweeping"
+  ],
+  "blocks": [
+    {
+      "block": "minecraft:spawner",
+      "min": 200,
+      "max": 400
+    },
+    {
+      "block": "minecraft:mossy_cobblestone",
+      "min": 1,
+      "max": 150
+    },
+    {
+      "block": "minecraft:cobblestone_wall",
+      "min": 2,
+      "max": 50
+    },
+    {
+      "block": "minecraft:cobblestone",
+      "min": 1,
+      "max": 100
+    },
+    {
+      "block": "minecraft:mossy_cobblestone_wall",
+      "min": 2,
+      "max": 50
+    },
+    {
+      "block": "minecraft:iron_bars",
+      "min": 3,
+      "max": 60
+    },
+    {
+      "block": "minecraft:glow_lichen",
+      "min": 1,
+      "max": 50
+    },
+    {
+      "block": "minecraft:chain",
+      "min": 3,
+      "max": 60
+    },
+    {
+      "block": "minecraft:chest",
+      "min": 5,
+      "max": 30
+    }
+  ],
+  "block_tags": [],
+  "loot": {
+    "tables": [
+      "minecraft:chests/simple_dungeon"
+    ],
+    "chance": 0.5
+  },
+  "trade": {
+    "profession": null,
+    "level": 0,
+    "max_uses": 0
+  }
+}

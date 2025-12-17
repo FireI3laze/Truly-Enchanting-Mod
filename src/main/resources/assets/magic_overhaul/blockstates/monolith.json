@@ -1,6 +1,0 @@
-{
-  "variants": {
-    "half=lower": { "model": "magic_overhaul:block/monolith_lower" },
-    "half=upper": { "model": "magic_overhaul:block/monolith_upper" }
-  }
-}

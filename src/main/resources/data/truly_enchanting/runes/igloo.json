@@ -1,0 +1,33 @@
+{
+  "id": "truly_enchanting:igloo",
+  "color": "#00BFFF",
+  "enchantments": [
+    "minecraft:frost_walker"
+  ],
+  "blocks": [
+    { "block": "minecraft:snow_block", "min": 1, "max": 200 },
+    { "block": "minecraft:ice", "min": 1, "max": 200 },
+    { "block": "minecraft:blue_ice", "min": 4, "max": 300 },
+    { "block": "minecraft:packed_ice", "min": 2, "max": 200 },
+    { "block": "minecraft:snow", "min": 1, "max": 150 },
+    { "block": "minecraft:mossy_stone_bricks", "min": 1, "max": 150 },
+    { "block": "minecraft:stone_bricks", "min": 1, "max": 150 },
+    { "block": "minecraft:brewing_stand", "min": 25, "max": 50 },
+    { "block": "minecraft:cauldron", "min": 25, "max": 50 },
+    { "block": "minecraft:iron_bars", "min": 3, "max": 60 },
+    { "block": "minecraft:red_bed", "min": 5, "max": 50 },
+    { "block": "minecraft:ladder", "min": 3, "max": 90 }
+  ],
+  "block_tags": [],
+  "loot": {
+    "tables": [
+      "minecraft:chests/igloo_chest"
+    ],
+    "chance": 1.0
+  },
+  "trade": {
+    "profession": null,
+    "level": 0,
+    "max_uses": 0
+  }
+}
