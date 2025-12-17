@@ -1,5 +1,6 @@
 package com.fireblaze.magic_overhaul.network;
 
+import com.fireblaze.magic_overhaul.MagicOverhaul;
 import com.fireblaze.magic_overhaul.blockentity.EnchantingTable.ArcaneEnchantingTableBlockEntity;
 import com.fireblaze.magic_overhaul.client.RunePacketHandlerClient;
 import com.fireblaze.magic_overhaul.util.BindingManager;
@@ -15,7 +16,7 @@ import java.util.Optional;
 public class Network {
     private static final String PROTOCOL = "1.0";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-            ResourceLocation.fromNamespaceAndPath("magic_overhaul", "main"),
+            ResourceLocation.fromNamespaceAndPath(MagicOverhaul.MODID, "main"),
             () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals
     );
 

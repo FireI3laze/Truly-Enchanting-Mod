@@ -65,6 +65,8 @@ public class MagicAccumulator {
     }
 
     public void tickMagicGain(Level level) {
+        if (level.isClientSide) return;
+
         // Tisch muss vorhanden sein
         if (tableBE == null || tableBE.getLevel() == null) return;
 

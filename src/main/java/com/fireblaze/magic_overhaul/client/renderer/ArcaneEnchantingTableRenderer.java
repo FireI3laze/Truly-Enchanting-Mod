@@ -30,7 +30,7 @@ public class ArcaneEnchantingTableRenderer implements BlockEntityRenderer<Arcane
         poseStack.pushPose();
 
         // Position über dem Tisch
-        poseStack.translate(0.5, 1.5, 0.5);
+        poseStack.translate(0.5, 1.25, 0.5);
 
         // Leichtes Auf- und Abwippen
         float hover = (float) Math.sin((entity.getLevel().getGameTime() + partialTicks) / 10.0) * 0.1f;

@@ -25,22 +25,22 @@
     {
       "block": "minecraft:stone",
       "min": 1,
-      "max": 100
+      "max": 50
     },
     {
       "block": "minecraft:andesite",
       "min": 1,
-      "max": 100
+      "max": 50
     },
     {
       "block": "minecraft:diorite",
       "min": 1,
-      "max": 100
+      "max": 50
     },
     {
       "block": "minecraft:granite",
       "min": 1,
-      "max": 100
+      "max": 50
     },
     {
       "block": "minecraft:glow_lichen",
@@ -50,7 +50,7 @@
     {
       "block": "minecraft:gravel",
       "min": 1,
-      "max": 100
+      "max": 50
     },
     {
       "block": "minecraft:dripstone_block",
@@ -71,7 +71,7 @@
   "block_tags": [
     {
       "tag": "forge:ores",
-      "min": 5,
+      "min": 4,
       "max": 100
     }
   ],

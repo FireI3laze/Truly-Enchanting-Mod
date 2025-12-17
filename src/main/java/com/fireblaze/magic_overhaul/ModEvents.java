@@ -29,7 +29,7 @@ import net.minecraftforge.network.PacketDistributor;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = "magic_overhaul")
+@Mod.EventBusSubscriber(modid = MagicOverhaul.MODID)
 public class ModEvents {
 
     @SubscribeEvent
@@ -109,7 +109,7 @@ public class ModEvents {
         if (!(be instanceof ArcaneEnchantingTableBlockEntity tableBE)) return;
 
         float magicPower = tableBE.getMagicAccumulator().getCurrentMagicPower();
-        if (magicPower <= 0) return;
+        if (magicPower <= 1) return;
 
         // Prüfen alle Slots: MainHand, OffHand, Rüstung
         List<ItemStack> stacks = new ArrayList<>();
@@ -132,7 +132,7 @@ public class ModEvents {
 
                 // Magische Kraft neu abrufen
                 magicPower = tableBE.getMagicAccumulator().getCurrentMagicPower();
-                if (magicPower <= 1) break; // keine Magie mehr übrig
+                if (magicPower <= 0) break; // keine Magie mehr übrig
             }
         }
     }

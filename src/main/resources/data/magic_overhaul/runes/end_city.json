@@ -7,15 +7,15 @@
   "blocks": [
     { "block": "minecraft:end_stone", "min": 1, "max": 150 },
     { "block": "minecraft:end_stone_bricks", "min": 2, "max": 200 },
-    { "block": "minecraft:purpur_block", "min": 5, "max": 150 },
-    { "block": "minecraft:purpur_pillar", "min": 5, "max": 200 },
-    { "block": "minecraft:chorus_plant", "min": 5, "max": 200 },
-    { "block": "minecraft:chorus_flower", "min": 20, "max": 200 },
+    { "block": "minecraft:purpur_block", "min": 4, "max": 200 },
+    { "block": "minecraft:purpur_pillar", "min": 4, "max": 200 },
+    { "block": "minecraft:chorus_plant", "min": 4, "max": 200 },
+    { "block": "minecraft:chorus_flower", "min": 8, "max": 200 },
     { "block": "minecraft:end_rod", "min": 4, "max": 100 },
-    { "block": "minecraft:magenta_stained_glass", "min": 2, "max": 100 },
-    { "block": "minecraft:magenta_stained_glass_pane", "min": 2, "max": 100 },
-    { "block": "minecraft:purple_stained_glass", "min": 2, "max": 100 },
-    { "block": "minecraft:purple_stained_glass_pane", "min": 2, "max": 100 },
+    { "block": "minecraft:magenta_stained_glass", "min": 4, "max": 100 },
+    { "block": "minecraft:magenta_stained_glass_pane", "min": 4, "max": 100 },
+    { "block": "minecraft:purple_stained_glass", "min": 4, "max": 100 },
+    { "block": "minecraft:purple_stained_glass_pane", "min": 4, "max": 100 },
     { "block": "minecraft:ender_chest", "min": 25, "max": 100 },
     { "block": "minecraft:shulker_box", "min": 25, "max": 100 }
 

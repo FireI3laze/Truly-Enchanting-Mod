@@ -1,5 +1,6 @@
 package com.fireblaze.magic_overhaul.client.screen;
 
+import com.fireblaze.magic_overhaul.MagicOverhaul;
 import com.fireblaze.magic_overhaul.blockentity.EnchantingTable.MagicAccumulator;
 import com.fireblaze.magic_overhaul.blockentity.MonolithBlockEntity;
 import com.fireblaze.magic_overhaul.client.color.RuneColorTheme;
@@ -202,7 +203,7 @@ public class MonolithScreen extends AbstractContainerScreen<MonolithMenu> {
     }
 
     private static final ResourceLocation GUI_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath("magic_overhaul", "textures/gui/monolith_gui.png");
+            ResourceLocation.fromNamespaceAndPath(MagicOverhaul.MODID, "textures/gui/monolith_gui.png");
 
 
     @Override

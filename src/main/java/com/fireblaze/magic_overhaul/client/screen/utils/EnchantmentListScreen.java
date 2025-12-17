@@ -148,10 +148,20 @@ public class EnchantmentListScreen {
 
             // Tooltip when hovering on icon area
             if (mouseX >= listX && mouseX < listX + 16 && mouseY >= y && mouseY < y + 16) {
+                Component costLine;
+                if (selectedLevel == 0) costLine = Component.literal("Cost: 0");
+                else {
+                    costLine = Component.literal(
+                            "Cost: " + MagicCostCalculator.calculateMagicRequirement(ench, selectedLevel)
+                    );
+                }
+
                 List<Component> tooltip = List.of(
                         Component.literal(name),
-                        Component.literal("Selected: " + Math.min(selectedLevel, maxLevel) + " / Max: " + maxLevel),
-                        Component.literal("Applied: " + currentOnItem)
+                        Component.literal(
+                                "Selected: " + Math.min(selectedLevel, maxLevel) + " / Max: " + maxLevel
+                        ),
+                        costLine
                 );
                 gui.renderComponentTooltip(font, tooltip, mouseX, mouseY);
             }

@@ -1,5 +1,6 @@
 package com.fireblaze.magic_overhaul.client.screen;
 
+import com.fireblaze.magic_overhaul.MagicOverhaul;
 import com.fireblaze.magic_overhaul.blockentity.EnchantingTable.MagicAccumulator;
 import com.fireblaze.magic_overhaul.client.ClientConfig;
 import com.fireblaze.magic_overhaul.client.screen.utils.*;
@@ -12,6 +13,7 @@ import com.fireblaze.magic_overhaul.util.MagicSourceBlocks;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -227,6 +229,10 @@ public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneE
 
     @Override
     protected void renderBg(GuiGraphics gui, float partialTicks, int x, int y) {
+        int backgroundX = (width - imageWidth) / 2;
+        int backgroundY = (height - imageHeight) / 2;
+        gui.blit(GUI_TEXTURE, backgroundX, backgroundY, 0, 0, imageWidth, imageHeight);
+
         // update controller parent positions in case leftPos/topPos changed on resize
         controllers.forEach(c -> c.recalculatePosition(leftPos, topPos, imageWidth, imageHeight));
 
@@ -640,4 +646,7 @@ public class ArcaneEnchantingTableScreen extends AbstractContainerScreen<ArcaneE
         if (bMatchesSide(b, ScreenSide.RIGHT)) return visibleController.get(ScreenSide.RIGHT);
         return null;
     }
+
+    private static final ResourceLocation GUI_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(MagicOverhaul.MODID, "textures/gui/arcane_enchanting_table_gui.png");
 }

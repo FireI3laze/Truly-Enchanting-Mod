@@ -6,6 +6,7 @@ import com.fireblaze.magic_overhaul.enchanting.LinkedMonolithManager;
 import com.fireblaze.magic_overhaul.menu.ArcaneEnchantingTableMenu;
 import com.fireblaze.magic_overhaul.network.SyncMagicAccumulatorPacket;
 import com.fireblaze.magic_overhaul.network.SyncSelectionPacket;
+import com.fireblaze.magic_overhaul.server.ArcaneTableRegistry;
 import com.fireblaze.magic_overhaul.util.MagicCostCalculator;
 import com.fireblaze.magic_overhaul.util.MagicScanner;
 import net.minecraft.core.BlockPos;
@@ -244,7 +245,10 @@ public class ArcaneEnchantingTableBlockEntity extends BlockEntity {
     private int tickCounter = 0;
 
     public static void tick(Level level, BlockPos pos, BlockState state, ArcaneEnchantingTableBlockEntity be) {
+        /*
+        System.out.println("tick");
         be.getMagicAccumulator().tickMagicGain(level);
+        */
         if (level.isClientSide) return;
 
         be.tickCounter++;
@@ -259,6 +263,22 @@ public class ArcaneEnchantingTableBlockEntity extends BlockEntity {
             }
         }
     }
+
+    public void serverTickIndependent() {
+        if (this.level == null || this.level.isClientSide) return;
+
+        // Magie weiter akkumulieren
+        this.getMagicAccumulator().tickMagicGain(this.level);
+
+        // Optional: langsame Re-Berechnungen
+        if (this.level.getGameTime() % 40 == 0) { // alle 2 Sekunden
+            /*
+            this.getOrComputeMonolithMagic((ServerLevel) this.level);
+            this.getMagicAccumulator().updateMaxMagic(this);
+            */
+        }
+    }
+
 
     private final Map<Enchantment, Integer> selected = new HashMap<>();
 
@@ -381,6 +401,8 @@ public class ArcaneEnchantingTableBlockEntity extends BlockEntity {
             this.getOrComputeMonolithMagic((ServerLevel) level);
             this.getMagicAccumulator().updateMaxMagic(this);
             scanSurroundingBlocks(3000, 25);
+
+            ArcaneTableRegistry.register(this);
         }
     }
 
@@ -394,6 +416,8 @@ public class ArcaneEnchantingTableBlockEntity extends BlockEntity {
                     1,
                     worldPosition
             );
+
+            ArcaneTableRegistry.unregister(this);
         }
     }
 }

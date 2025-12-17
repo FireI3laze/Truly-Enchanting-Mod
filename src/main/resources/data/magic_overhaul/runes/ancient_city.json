@@ -9,7 +9,7 @@
     {
       "block": "minecraft:sculk",
       "min": 3,
-      "max": 150
+      "max": 200
     },
     {
       "block": "minecraft:sculk_vein",
@@ -34,22 +34,22 @@
     {
       "block": "minecraft:deepslate",
       "min": 1,
-      "max": 300
+      "max": 200
     },
     {
       "block": "minecraft:cobbled_deepslate",
       "min": 1,
-      "max": 200
+      "max": 100
     },
     {
       "block": "minecraft:deepslate_tiles",
       "min": 2,
-      "max": 200
+      "max": 100
     },
     {
       "block": "minecraft:deepslate_bricks",
       "min": 2,
-      "max": 200
+      "max": 100
     },
     {
       "block": "minecraft:soul_sand",
@@ -79,14 +79,14 @@
     {
       "block": "minecraft:polished_deepslate",
       "min": 1,
-      "max": 200
+      "max": 100
     }
   ],
   "block_tags": [
     {
       "tag": "minecraft:wool",
       "min": 2,
-      "max": 200
+      "max": 100
     },
     {
       "tag": "minecraft:candles",

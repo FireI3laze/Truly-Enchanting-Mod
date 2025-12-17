@@ -1,8 +1,8 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "SCS",
-    "WDW",
+    "WMW",
+    "WCW",
     "SCS"
   ],
   "key": {
@@ -15,8 +15,8 @@
     "W": {
       "item": "minecraft:cobblestone_wall"
     },
-    "D": {
-      "item": "minecraft:diamond"
+    "M": {
+      "item": "magic_overhaul:magic_essence"
     }
   },
   "result": {

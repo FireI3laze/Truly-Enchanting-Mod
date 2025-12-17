@@ -1,24 +1,36 @@
 {
   "blocks": [
-    { "name": "minecraft:bookshelf", "magicPower": 5, "magicCap": 50 },
-    { "name": "minecraft:enchanting_table", "magicPower": 10, "magicCap": 100 },
-    { "name": "minecraft:amethyst_block", "magicPower": 10, "magicCap": 100 },
-    { "name": "minecraft:budding_amethyst", "magicPower": 2000, "magicCap": 10000 },
-    { "name": "minecraft:amethyst_cluster", "magicPower": 10, "magicCap": 100 },
-    { "name": "minecraft:large_amethyst_bud", "magicPower": 10, "magicCap": 100 },
-    { "name": "minecraft:medium_amethyst_bud", "magicPower": 10, "magicCap": 100 },
-    { "name": "minecraft:small_amethyst_bud", "magicPower": 10, "magicCap": 100 },
-    { "name": "minecraft:mycelium", "magicPower": 10, "magicCap": 100 },
+    { "name": "minecraft:bookshelf", "magicPower": 5, "magicCap": 500 },
+    { "name": "minecraft:enchanting_table", "magicPower": 25, "magicCap": 100 },
+    { "name": "minecraft:amethyst_block", "magicPower": 3, "magicCap": 600 },
+    { "name": "minecraft:budding_amethyst", "magicPower": 500, "magicCap": 1000 },
+    { "name": "minecraft:amethyst_cluster", "magicPower": 5, "magicCap": 100 },
+    { "name": "minecraft:large_amethyst_bud", "magicPower": 5, "magicCap": 100 },
+    { "name": "minecraft:medium_amethyst_bud", "magicPower": 5, "magicCap": 100 },
+    { "name": "minecraft:small_amethyst_bud", "magicPower": 5, "magicCap": 100 },
+    { "name": "minecraft:mycelium", "magicPower": 1, "magicCap": 300 },
     { "name": "minecraft:lectern", "magicPower": 10, "magicCap": 100 },
-    { "name": "minecraft:purple_stained_glass", "magicPower": 10, "magicCap": 100 },
-    { "name": "minecraft:magenta_stained_glass", "magicPower": 10, "magicCap": 100 },
-    { "name": "minecraft:purple_stained_glass_pane", "magicPower": 10, "magicCap": 100 },
-    { "name": "minecraft:magenta_stained_glass_pane", "magicPower": 10, "magicCap": 100 },
+    { "name": "minecraft:cauldron", "magicPower": 10, "magicCap": 100 },
+    { "name": "minecraft:purple_stained_glass", "magicPower": 4, "magicCap": 200 },
+    { "name": "minecraft:magenta_stained_glass", "magicPower": 4, "magicCap": 200 },
+    { "name": "minecraft:purple_stained_glass_pane", "magicPower": 4, "magicCap": 200 },
+    { "name": "minecraft:magenta_stained_glass_pane", "magicPower": 4, "magicCap": 200 },
     { "name": "minecraft:brewing_stand", "magicPower": 10, "magicCap": 100 },
-    { "name": "minecraft:calcite", "magicPower": 10, "magicCap": 100 },
-    { "name": "minecraft:blackstone", "magicPower": 10, "magicCap": 100 }
+    { "name": "minecraft:calcite", "magicPower": 2, "magicCap": 500 },
+    { "name": "minecraft:blackstone", "magicPower": 2, "magicCap": 500 },
+    { "name": "minecraft:smooth_basalt", "magicPower": 2, "magicCap": 500 },
+    { "name": "minecraft:soul_sand", "magicPower": 2, "magicCap": 100 },
+    { "name": "minecraft:soul_soil", "magicPower": 2, "magicCap": 100 },
+    { "name": "minecraft:nether_wart", "magicPower": 4, "magicCap": 200 },
+    { "name": "minecraft:nether_wart_block", "magicPower": 4, "magicCap": 200 },
+    { "name": "minecraft:stone_bricks", "magicPower": 1, "magicCap": 200 },
+    { "name": "minecraft:cracked_stone_bricks", "magicPower": 1, "magicCap": 200 },
+    { "name": "minecraft:mossy_stone_bricks", "magicPower": 1, "magicCap": 200 },
+    { "name": "minecraft:beacon", "magicPower": 250, "magicCap": 1000 }
   ],
   "tags": [
-    { "name": "minecraft:candles", "magicPower": 2, "magicCap": 30 }
+    { "name": "minecraft:candles", "magicPower": 5, "magicCap": 300 },
+    { "name": "minecraft:planks", "magicPower": 1, "magicCap": 400 },
+    { "name": "minecraft:logs", "magicPower": 2, "magicCap": 400 }
   ]
 }

@@ -1,5 +1,6 @@
 package com.fireblaze.magic_overhaul.item;
 
+import com.fireblaze.magic_overhaul.MagicOverhaul;
 import com.fireblaze.magic_overhaul.block.MonolithBlock;
 import com.fireblaze.magic_overhaul.blockentity.EnchantingTable.ArcaneEnchantingTableBlockEntity;
 import com.fireblaze.magic_overhaul.blockentity.MonolithBlockEntity;
@@ -53,7 +54,7 @@ import org.joml.Matrix4f;
 
 import java.util.*;
 
-@Mod.EventBusSubscriber(modid = "magic_overhaul")
+@Mod.EventBusSubscriber(modid = MagicOverhaul.MODID)
 public class WandItem extends Item {
     private static final Map<ParticleBeam, Integer> activeBeams = new HashMap<>();
     public enum WandMode {
@@ -573,10 +574,10 @@ public class WandItem extends Item {
 
                 // Partikellogik
                 double startX = beam.start.getX() + 0.5;
-                double startY = beam.start.getY() + 1.0;
+                double startY = beam.start.getY() + 2.2;
                 double startZ = beam.start.getZ() + 0.5;
                 double endX = beam.end.x;
-                double endY = beam.end.y;
+                double endY = beam.end.y - 0.3;
                 double endZ = beam.end.z;
 
                 // Map von Partikeltyp -> Anzahl pro Tick
